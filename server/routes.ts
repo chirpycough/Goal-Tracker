@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import express, { type Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
@@ -173,8 +173,7 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     let rating = (Number(distance) / 10) * 2.5 + (Number(maxSpeed) / 35) * 2.5 + (touches / 60) * 2.0 + (shots / 5) * 1.5 + (keyPasses / 5) * 1.5;
     rating = Math.min(Math.max(rating * 10, 1.0), 10.0);
     
-    // Simulate Heatmap Generation (just use a placeholder or create a dummy file)
-    const heatmapFilename = \`heatmap_player_\${videoId}.png\`;
+    const heatmapFilename = `heatmap_player_${videoId}.png`;
     const heatmapPath = path.join(STATIC_DIR, heatmapFilename);
     
     // Create a dummy transparent 1x1 png if we don't have python available yet
@@ -192,7 +191,7 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
       performanceRating: Number(rating.toFixed(1)),
       strengths,
       weaknesses,
-      heatmapImageUrl: \`/static/heatmaps/\${heatmapFilename}\`,
+      heatmapImageUrl: `/static/heatmaps/${heatmapFilename}`,
     });
     
     console.log(`Processing completed for video ${videoId}`);
