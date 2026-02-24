@@ -53,15 +53,17 @@ export default function Analysis() {
 
   // Format data for Recharts (Normalize to 0-100 scales for radar)
   const radarData = video.status === 'completed' ? [
-    { subject: 'Speed', A: Math.min((video.maxSpeedKmh || 0) / 35 * 100, 100) },
-    { subject: 'Stamina', A: Math.min((video.distanceCoveredKm || 0) / 12 * 100, 100) },
-    { subject: 'Control', A: Math.min((video.ballTouches || 0) / 100 * 100, 100) },
-    { subject: 'Attacking', A: Math.min((video.shots || 0) / 5 * 100, 100) },
-    { subject: 'Vision', A: Math.min((video.keyPasses || 0) / 10 * 100, 100) },
+    { subject: 'Speed', A: Math.min(Math.max(((video.maxSpeedKmh || 25) - 25) / (35 - 25) * 100, 0), 100) },
+    { subject: 'Stamina', A: Math.min(Math.max(((video.distanceCoveredKm || 8) - 8) / (12 - 8) * 100, 0), 100) },
+    { subject: 'Control', A: Math.min(Math.max(((video.ballTouches || 20) - 20) / (100 - 20) * 100, 0), 100) },
+    { subject: 'Attacking', A: Math.min((video.shots || 0) / 6 * 100, 100) },
+    { subject: 'Vision', A: Math.min((video.keyPasses || 0) / 6 * 100, 100) },
   ] : [];
 
   const barData = video.status === 'completed' ? [
     { name: 'Touches', count: video.ballTouches || 0 },
+    { name: 'Passes', count: video.passes || 0 },
+    { name: 'Dribbles', count: video.dribbles || 0 },
     { name: 'Shots', count: video.shots || 0 },
     { name: 'Key Passes', count: video.keyPasses || 0 },
   ] : [];
@@ -145,6 +147,52 @@ export default function Analysis() {
                 icon={<Gauge className="w-5 h-5" />} 
                 delay={0.4}
               />
+            </div>
+
+            {/* Extended Metrics Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div className="glass-panel p-4 rounded-2xl border border-white/5 text-center">
+                <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Passes</p>
+                <p className="text-xl font-display font-bold text-white">{video.passes || 0}</p>
+                <div className="mt-2 w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                  <div className="h-full bg-primary/60" style={{ width: `${Math.min((video.passes || 0) / 80 * 100, 100)}%` }} />
+                </div>
+              </div>
+              <div className="glass-panel p-4 rounded-2xl border border-white/5 text-center">
+                <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Dribbles</p>
+                <p className="text-xl font-display font-bold text-white">{video.dribbles || 0}</p>
+                <div className="mt-2 w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                  <div className="h-full bg-primary/60" style={{ width: `${Math.min((video.dribbles || 0) / 10 * 100, 100)}%` }} />
+                </div>
+              </div>
+              <div className="glass-panel p-4 rounded-2xl border border-white/5 text-center">
+                <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Shots (OT)</p>
+                <p className="text-xl font-display font-bold text-white">{video.shots || 0} ({video.shotsOnTarget || 0})</p>
+                <div className="mt-2 w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                  <div className="h-full bg-primary/60" style={{ width: `${Math.min((video.shots || 0) / 6 * 100, 100)}%` }} />
+                </div>
+              </div>
+              <div className="glass-panel p-4 rounded-2xl border border-white/5 text-center">
+                <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Tackles</p>
+                <p className="text-xl font-display font-bold text-white">{video.tackles || 0}</p>
+                <div className="mt-2 w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                  <div className="h-full bg-primary/60" style={{ width: `${Math.min((video.tackles || 0) / 10 * 100, 100)}%` }} />
+                </div>
+              </div>
+              <div className="glass-panel p-4 rounded-2xl border border-white/5 text-center">
+                <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Fouls Drawn</p>
+                <p className="text-xl font-display font-bold text-white">{video.foulsDrawn || 0}</p>
+                <div className="mt-2 w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                  <div className="h-full bg-primary/60" style={{ width: `${Math.min((video.foulsDrawn || 0) / 5 * 100, 100)}%` }} />
+                </div>
+              </div>
+              <div className="glass-panel p-4 rounded-2xl border border-white/5 text-center">
+                <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Offsides</p>
+                <p className="text-xl font-display font-bold text-white">{video.offsides || 0}</p>
+                <div className="mt-2 w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                  <div className="h-full bg-destructive/60" style={{ width: `${Math.min((video.offsides || 0) / 5 * 100, 100)}%` }} />
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -137,7 +137,13 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     const maxSpeed = (Math.random() * 8 + 25).toFixed(1); // 25-33 km/h
     const touches = Math.floor(Math.random() * 40 + 20); // 20-60
     const shots = Math.floor(Math.random() * 5); // 0-4
+    const shotsOnTarget = Math.floor(Math.random() * (shots + 1));
     const keyPasses = Math.floor(Math.random() * 6); // 0-5
+    const dribbles = Math.floor(Math.random() * 8);
+    const passes = Math.floor(Math.random() * 60 + 10);
+    const tackles = Math.floor(Math.random() * 6);
+    const foulsDrawn = Math.floor(Math.random() * 4);
+    const offsides = Math.floor(Math.random() * 3);
     
     // Generate AI Summary using OpenAI
     const prompt = `Analyze this football player's stats and provide a very brief (2-3 sentences) summary of their strengths and weaknesses.
@@ -146,8 +152,11 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     Avg Speed: ${avgSpeed} km/h
     Max Speed: ${maxSpeed} km/h
     Touches: ${touches}
-    Shots: ${shots}
+    Shots: ${shots} (${shotsOnTarget} on target)
     Key Passes: ${keyPasses}
+    Dribbles: ${dribbles}
+    Passes: ${passes}
+    Tackles: ${tackles}
     
     Output JSON format: { "strengths": "string", "weaknesses": "string" }`;
 
@@ -187,7 +196,13 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
       maxSpeedKmh: Number(maxSpeed),
       ballTouches: touches,
       shots: shots,
+      shotsOnTarget: shotsOnTarget,
       keyPasses: keyPasses,
+      dribbles: dribbles,
+      passes: passes,
+      tackles: tackles,
+      foulsDrawn: foulsDrawn,
+      offsides: offsides,
       performanceRating: Number(rating.toFixed(1)),
       strengths,
       weaknesses,
@@ -218,7 +233,13 @@ async function seedDatabase() {
       maxSpeedKmh: 31.4,
       ballTouches: 68,
       shots: 5,
+      shotsOnTarget: 3,
       keyPasses: 4,
+      dribbles: 6,
+      passes: 45,
+      tackles: 2,
+      foulsDrawn: 3,
+      offsides: 1,
       performanceRating: 9.1,
       strengths: "Elite ball control, high shot volume, incredible burst speed",
       weaknesses: "Lower defensive work rate, avoids tracking back",
