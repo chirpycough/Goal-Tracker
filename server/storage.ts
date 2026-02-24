@@ -1,38 +1,41 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import { db } from "./db";
+import { videos, type InsertVideo, type UpdateVideoRequest, type VideoResponse } from "@shared/schema";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getVideos(): Promise<VideoResponse[]>;
+  getVideo(id: number): Promise<VideoResponse | undefined>;
+  createVideo(video: InsertVideo): Promise<VideoResponse>;
+  updateVideo(id: number, updates: UpdateVideoRequest): Promise<VideoResponse>;
+  deleteVideo(id: number): Promise<void>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
-  constructor() {
-    this.users = new Map();
+export class DatabaseStorage implements IStorage {
+  async getVideos(): Promise<VideoResponse[]> {
+    return await db.select().from(videos).orderBy(desc(videos.uploadDate));
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async getVideo(id: number): Promise<VideoResponse | undefined> {
+    const [video] = await db.select().from(videos).where(eq(videos.id, id));
+    return video;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async createVideo(video: InsertVideo): Promise<VideoResponse> {
+    const [newVideo] = await db.insert(videos).values(video).returning();
+    return newVideo;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async updateVideo(id: number, updates: UpdateVideoRequest): Promise<VideoResponse> {
+    const [updated] = await db.update(videos)
+      .set(updates)
+      .where(eq(videos.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteVideo(id: number): Promise<void> {
+    await db.delete(videos).where(eq(videos.id, id));
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
