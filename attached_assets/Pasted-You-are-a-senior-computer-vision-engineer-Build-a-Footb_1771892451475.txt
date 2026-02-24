@@ -1,0 +1,149 @@
+You are a senior computer vision engineer.
+
+Build a Football Player Video Analysis System using Python.
+
+The system must:
+
+========================================
+CORE OBJECTIVE
+========================================
+
+1. Accept uploaded football match video.
+2. Detect and track ONE selected player throughout the video.
+3. Detect football using object detection.
+4. Track player movement coordinates frame-by-frame.
+5. Calculate:
+
+   - Total distance covered (in kilometers)
+   - Average speed (km/h)
+   - Max sprint speed (km/h)
+   - Total ball touches
+   - Estimated shots (ball acceleration toward goal)
+   - Estimated key passes
+
+6. Generate movement heatmap image.
+7. Generate structured performance JSON report.
+8. Generate AI summary (strengths and weaknesses).
+
+========================================
+TECH STACK
+========================================
+
+- Python 3.10+
+- FastAPI (API server)
+- OpenCV
+- YOLOv8 (ultralytics)
+- DeepSORT or ByteTrack
+- NumPy
+- Matplotlib
+- Pydantic
+
+========================================
+API REQUIREMENTS
+========================================
+
+POST /upload-video
+- Accept video file
+- Accept player selection (bounding box on first frame OR jersey color)
+
+Process video frame by frame.
+
+Return JSON:
+
+{
+  "distance_covered_km": 9.8,
+  "average_speed_kmh": 7.4,
+  "max_speed_kmh": 32.1,
+  "ball_touches": 54,
+  "shots": 4,
+  "key_passes": 3,
+  "performance_rating": 8.2,
+  "strengths": "Explosive pace and strong attacking movement",
+  "weaknesses": "Limited defensive tracking",
+  "heatmap_image_url": "/static/heatmap_player_1.png"
+}
+
+========================================
+VIDEO PROCESSING LOGIC
+========================================
+
+1. Use YOLOv8 to detect:
+   - Players
+   - Ball
+
+2. Use tracking algorithm to assign consistent ID to selected player.
+
+3. Store player's (x,y) center coordinates each frame.
+
+4. Distance calculation:
+   - Compute pixel displacement between frames.
+   - Convert pixels to meters using pitch scaling assumption.
+   - Accumulate total meters.
+
+5. Speed:
+   - speed = distance / time
+   - Track peak speed.
+
+6. Ball touch detection:
+   - If ball bounding box overlaps player bounding box → count touch.
+
+7. Shot detection:
+   - Detect sudden high velocity ball movement toward goal area.
+
+8. Heatmap:
+   - Create 2D density map of player coordinates.
+   - Overlay on football pitch image.
+   - Save as PNG.
+
+========================================
+PERFORMANCE RATING LOGIC
+========================================
+
+Create rating formula:
+
+rating =
+  (normalized_distance * 0.25)
++ (normalized_speed * 0.25)
++ (ball_touches_score * 0.2)
++ (shots_score * 0.15)
++ (key_passes_score * 0.15)
+
+Clamp rating between 1.0 and 10.0.
+
+========================================
+AI SUMMARY LOGIC
+========================================
+
+Generate strengths and weaknesses using rule-based logic:
+
+If max_speed > 30 → add "Explosive pace"
+If distance < threshold → add "Low work rate"
+If high attacking zone presence → add "Strong offensive positioning"
+If low defensive zone presence → add "Limited defensive contribution"
+
+========================================
+PROJECT STRUCTURE
+========================================
+
+/app
+  main.py
+  video_processor.py
+  tracker.py
+  metrics.py
+  heatmap.py
+/static
+  heatmaps/
+/models
+requirements.txt
+
+========================================
+IMPORTANT
+========================================
+
+- Use async endpoints.
+- Add proper error handling.
+- Ensure memory efficiency.
+- Do not crash on large videos.
+- Return progress logs in console.
+
+Generate full working code for all files.
