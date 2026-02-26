@@ -7,7 +7,6 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { spawn } from "child_process";
-import { setupAuth } from "./auth";
 
 // Ensure uploads and static directories exist
 const UPLOADS_DIR = path.join(process.cwd(), "uploads");
@@ -32,23 +31,12 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  // Set up authentication routes and session
-  setupAuth(app);
-
   // Serve static files (heatmaps)
   app.use("/static", express.static(path.join(process.cwd(), "static")));
 
-  // Middleware to protect routes
-  const requireAuth = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    next();
-  };
-
   // --- API Routes ---
 
-  app.get(api.videos.list.path, requireAuth, async (req, res) => {
+  app.get(api.videos.list.path, async (req, res) => {
     try {
       const videos = await storage.getVideos();
       res.json(videos);
@@ -58,7 +46,7 @@ export async function registerRoutes(
     }
   });
 
-  app.get(api.videos.get.path, requireAuth, async (req, res) => {
+  app.get(api.videos.get.path, async (req, res) => {
     try {
       const video = await storage.getVideo(Number(req.params.id));
       if (!video) {
@@ -71,7 +59,7 @@ export async function registerRoutes(
     }
   });
 
-  app.delete(api.videos.delete.path, requireAuth, async (req, res) => {
+  app.delete(api.videos.delete.path, async (req, res) => {
     try {
       const videoId = Number(req.params.id);
       const video = await storage.getVideo(videoId);
@@ -98,7 +86,7 @@ export async function registerRoutes(
   });
 
   // Video Upload Route
-  app.post(api.videos.upload.path, requireAuth, upload.single("video"), async (req, res) => {
+  app.post(api.videos.upload.path, upload.single("video"), async (req, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: "No video file provided" });
@@ -124,12 +112,6 @@ export async function registerRoutes(
       res.status(500).json({ message: "Failed to process upload" });
     }
   });
-
-  // Seed initial data if DB is empty
-  seedDatabase().catch(console.error);
-
-  return httpServer;
-}
 
   // Seed initial data if DB is empty
   seedDatabase().catch(console.error);

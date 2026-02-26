@@ -2,9 +2,6 @@ import { pgTable, text, serial, integer, doublePrecision, timestamp, jsonb } fro
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Import users table
-export * from "./models/user";
-
 // --- Schema Definitions ---
 
 export const videos = pgTable("videos", {
