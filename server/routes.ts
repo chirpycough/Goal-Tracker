@@ -44,6 +44,16 @@ export async function registerRoutes(
     next();
   };
 
+  app.patch("/api/user", requireAuth, async (req, res) => {
+    try {
+      const updatedUser = await storage.updateUser(req.user!.id, req.body);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
   // --- API Routes ---
 
   app.get(api.videos.list.path, requireAuth, async (req, res) => {

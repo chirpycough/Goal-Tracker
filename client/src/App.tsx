@@ -10,12 +10,14 @@ import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/Dashboard";
 import Analysis from "@/pages/Analysis";
 import AuthPage from "@/pages/AuthPage";
+import Profile from "@/pages/Profile";
 
 function Router() {
   return (
     <Switch>
       <ProtectedRoute path="/" component={Dashboard} />
       <ProtectedRoute path="/analysis/:id" component={Analysis} />
+      <ProtectedRoute path="/profile" component={Profile} />
       <Route path="/auth" component={AuthPage} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />

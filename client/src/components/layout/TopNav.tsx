@@ -28,16 +28,20 @@ export function TopNav() {
             </Link>
             <div className="h-8 w-px bg-white/10" />
             {user && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-muted-foreground hover:text-destructive"
-                onClick={() => logoutMutation.mutate()}
-                disabled={logoutMutation.isPending}
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </Button>
+              <div className="flex items-center gap-2">
+                <Link href="/profile" className="text-sm font-medium text-muted-foreground hover:text-white transition-colors px-2 py-1 rounded-md hover:bg-white/5">
+                  {user.username}
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-muted-foreground hover:text-destructive p-2"
+                  onClick={() => logoutMutation.mutate()}
+                  disabled={logoutMutation.isPending}
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
             )}
             <div className="flex items-center gap-2 text-sm font-medium text-white/80 bg-white/5 px-4 py-2 rounded-full border border-white/10">
               <PlaySquare className="w-4 h-4 text-primary" />
