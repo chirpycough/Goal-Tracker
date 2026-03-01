@@ -76,5 +76,13 @@ export type UpdateVideoRequest = Partial<typeof videos.$inferInsert>;
 export type VideoResponse = Video;
 export type VideoListResponse = Video[];
 
-// --- Shared Constants / Types for Frontend and Backend ---
-export type JobStatus = "pending" | "processing" | "completed" | "failed";
+export const messages = pgTable("messages", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertMessageSchema = createInsertSchema(messages).omit({ id: true, createdAt: true });
+export type Message = typeof messages.$inferSelect;
+export type InsertMessage = z.infer<typeof insertMessageSchema>;

@@ -13,10 +13,9 @@ export interface IStorage {
   updateVideo(id: number, updates: UpdateVideoRequest): Promise<VideoResponse>;
   deleteVideo(id: number): Promise<void>;
   
-  // Auth methods
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // Message methods
+  getMessages(): Promise<(Message & { user: User })[]>;
+  createMessage(message: InsertMessage): Promise<Message & { user: User }>;
   sessionStore: session.Store;
 }
 
@@ -79,6 +78,26 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, id))
       .returning();
     return updated;
+  }
+
+  async getMessages(): Promise<(Message & { user: User })[]> {
+    const rows = await db
+      .select({
+        message: messages,
+        user: users,
+      })
+      .from(messages)
+      .innerJoin(users, eq(messages.userId, users.id))
+      .orderBy(desc(messages.createdAt))
+      .limit(50);
+    
+    return rows.map(row => ({ ...row.message, user: row.user }));
+  }
+
+  async createMessage(message: InsertMessage): Promise<Message & { user: User }> {
+    const [newMessage] = await db.insert(messages).values(message).returning();
+    const user = await this.getUser(newMessage.userId);
+    return { ...newMessage, user: user! };
   }
 }
 

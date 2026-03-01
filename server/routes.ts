@@ -54,6 +54,27 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/messages", requireAuth, async (req, res) => {
+    try {
+      const messages = await storage.getMessages();
+      res.json(messages);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch messages" });
+    }
+  });
+
+  app.post("/api/messages", requireAuth, async (req, res) => {
+    try {
+      const message = await storage.createMessage({
+        userId: req.user!.id,
+        content: req.body.content,
+      });
+      res.status(201).json(message);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to send message" });
+    }
+  });
+
   // --- API Routes ---
 
   app.get(api.videos.list.path, requireAuth, async (req, res) => {
