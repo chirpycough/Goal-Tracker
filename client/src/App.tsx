@@ -11,6 +11,7 @@ import Dashboard from "@/pages/Dashboard";
 import Analysis from "@/pages/Analysis";
 import AuthPage from "@/pages/AuthPage";
 import Profile from "@/pages/Profile";
+import ChatPage from "@/pages/ChatPage";
 
 function Router() {
   return (
@@ -18,6 +19,7 @@ function Router() {
       <ProtectedRoute path="/" component={Dashboard} />
       <ProtectedRoute path="/analysis/:id" component={Analysis} />
       <ProtectedRoute path="/profile" component={Profile} />
+      <ProtectedRoute path="/chat/:id" component={ChatPage} />
       <Route path="/auth" component={AuthPage} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />

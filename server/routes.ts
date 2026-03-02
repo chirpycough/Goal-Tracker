@@ -54,9 +54,19 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/messages", requireAuth, async (req, res) => {
+  app.get("/api/users", requireAuth, async (req, res) => {
     try {
-      const messages = await storage.getMessages();
+      await storage.updateLastSeen(req.user!.id);
+      const allUsers = await storage.getUsers();
+      res.json(allUsers);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  app.get("/api/messages/:otherUserId", requireAuth, async (req, res) => {
+    try {
+      const messages = await storage.getMessages(req.user!.id, Number(req.params.otherUserId));
       res.json(messages);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch messages" });
@@ -66,7 +76,8 @@ export async function registerRoutes(
   app.post("/api/messages", requireAuth, async (req, res) => {
     try {
       const message = await storage.createMessage({
-        userId: req.user!.id,
+        senderId: req.user!.id,
+        receiverId: req.body.receiverId,
         content: req.body.content,
       });
       res.status(201).json(message);

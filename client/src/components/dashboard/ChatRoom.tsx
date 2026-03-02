@@ -1,118 +1,68 @@
 import * as React from "react";
-import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { Message, User } from "@shared/schema";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useQuery } from "@tanstack/react-query";
+import { User } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Send, Loader2, MessageSquare } from "lucide-react";
-import { format } from "date-fns";
-
-type MessageWithUser = Message & { user: User };
+import { Loader2, Users, Circle } from "lucide-react";
+import { Link } from "wouter";
 
 export function ChatRoom() {
-  const { user } = useAuth();
-  const [content, setContent] = useState("");
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const { data: messages, isLoading } = useQuery<MessageWithUser[]>({
-    queryKey: ["/api/messages"],
-    refetchInterval: 3000,
+  const { user: currentUser } = useAuth();
+  
+  const { data: allUsers, isLoading } = useQuery<User[]>({
+    queryKey: ["/api/users"],
+    refetchInterval: 5000,
   });
 
-  const sendMessageMutation = useMutation({
-    mutationFn: async (content: string) => {
-      const res = await apiRequest("POST", "/api/messages", { content });
-      return res.json();
-    },
-    onSuccess: () => {
-      setContent("");
-      queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
-    },
-  });
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!content.trim() || sendMessageMutation.isPending) return;
-    sendMessageMutation.mutate(content);
-  };
+  const onlineUsers = allUsers?.filter(u => {
+    if (u.id === currentUser?.id) return false;
+    const lastSeen = new Date(u.lastSeen).getTime();
+    const now = new Date().getTime();
+    return (now - lastSeen) < 30000; // Online if seen in last 30s
+  }) || [];
 
   return (
     <Card className="glass-panel border-white/5 h-[600px] flex flex-col">
       <CardHeader className="border-b border-white/5 bg-white/5 flex flex-row items-center gap-2">
-        <MessageSquare className="w-5 h-5 text-primary" />
-        <CardTitle className="text-xl font-display">Global Chatroom</CardTitle>
+        <Users className="w-5 h-5 text-primary" />
+        <CardTitle className="text-xl font-display">Members Online</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
-        <ScrollArea className="flex-1 p-4" ref={scrollRef}>
-          <div className="space-y-4">
+        <ScrollArea className="flex-1 p-4">
+          <div className="space-y-2">
             {isLoading ? (
               <div className="flex justify-center p-4">
                 <Loader2 className="w-6 h-6 animate-spin text-primary" />
               </div>
+            ) : onlineUsers.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>No members online</p>
+              </div>
             ) : (
-              messages?.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex flex-col ${
-                    msg.userId === user?.id ? "items-end" : "items-start"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-medium text-muted-foreground">
-                      {msg.user.username}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground/60">
-                      {format(new Date(msg.createdAt), "HH:mm")}
-                    </span>
+              onlineUsers.map((u) => (
+                <Link key={u.id} href={`/chat/${u.id}`}>
+                  <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer transition-colors border border-transparent hover:border-white/10 group">
+                    <div className="relative">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                        {u.username[0].toUpperCase()}
+                      </div>
+                      <Circle className="w-3 h-3 text-primary fill-primary absolute -bottom-0.5 -right-0.5 border-2 border-background rounded-full" />
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                      <p className="font-medium text-white truncate group-hover:text-primary transition-colors">
+                        {u.username}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        Online
+                      </p>
+                    </div>
                   </div>
-                  <div
-                    className={`px-4 py-2 rounded-2xl text-sm max-w-[80%] ${
-                      msg.userId === user?.id
-                        ? "bg-primary text-primary-foreground rounded-tr-none"
-                        : "bg-white/10 text-white rounded-tl-none"
-                    }`}
-                  >
-                    {msg.content}
-                  </div>
-                </div>
-              )).reverse()
+                </Link>
+              ))
             )}
           </div>
         </ScrollArea>
-        <form
-          onSubmit={handleSubmit}
-          className="p-4 border-t border-white/5 bg-white/5 flex gap-2"
-        >
-          <Input
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Type a message..."
-            className="bg-white/5 border-white/10 focus-visible:ring-primary"
-            disabled={sendMessageMutation.isPending}
-          />
-          <Button
-            type="submit"
-            size="icon"
-            disabled={!content.trim() || sendMessageMutation.isPending}
-          >
-            {sendMessageMutation.isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
-          </Button>
-        </form>
       </CardContent>
     </Card>
   );

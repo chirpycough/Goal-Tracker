@@ -76,9 +76,29 @@ export type UpdateVideoRequest = Partial<typeof videos.$inferInsert>;
 export type VideoResponse = Video;
 export type VideoListResponse = Video[];
 
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  fullName: text("full_name"),
+  email: text("email"),
+  country: text("country"),
+  contactNumber: text("contact_number"),
+  whatsAppNumber: text("whatsapp_number"),
+  currentClub: text("current_club"),
+  playerPosition: text("player_position"),
+  state: text("state"),
+  matchVideosCount: text("match_videos_count"),
+  videoLink: text("video_link"),
+  howFoundUs: text("how_found_us"),
+  playerPhoto: text("player_photo"),
+  lastSeen: timestamp("last_seen").defaultNow().notNull(),
+});
+
 export const messages = pgTable("messages", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
+  senderId: integer("sender_id").notNull(),
+  receiverId: integer("receiver_id").notNull(),
   content: text("content").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

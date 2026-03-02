@@ -13,9 +13,17 @@ export interface IStorage {
   updateVideo(id: number, updates: UpdateVideoRequest): Promise<VideoResponse>;
   deleteVideo(id: number): Promise<void>;
   
+  // Auth methods
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  getUsers(): Promise<User[]>;
+  createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, updates: Partial<InsertUser>): Promise<User>;
+  updateLastSeen(id: number): Promise<void>;
+  
   // Message methods
-  getMessages(): Promise<(Message & { user: User })[]>;
-  createMessage(message: InsertMessage): Promise<Message & { user: User }>;
+  getMessages(userId1: number, userId2: number): Promise<Message[]>;
+  createMessage(message: InsertMessage): Promise<Message>;
   sessionStore: session.Store;
 }
 
@@ -80,24 +88,32 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
-  async getMessages(): Promise<(Message & { user: User })[]> {
-    const rows = await db
-      .select({
-        message: messages,
-        user: users,
-      })
-      .from(messages)
-      .innerJoin(users, eq(messages.userId, users.id))
-      .orderBy(desc(messages.createdAt))
-      .limit(50);
-    
-    return rows.map(row => ({ ...row.message, user: row.user }));
+  async getUsers(): Promise<User[]> {
+    return await db.select().from(users);
   }
 
-  async createMessage(message: InsertMessage): Promise<Message & { user: User }> {
+  async updateLastSeen(id: number): Promise<void> {
+    await db.update(users)
+      .set({ lastSeen: new Date() })
+      .where(eq(users.id, id));
+  }
+
+  async getMessages(userId1: number, userId2: number): Promise<Message[]> {
+    return await db
+      .select()
+      .from(messages)
+      .where(
+        or(
+          and(eq(messages.senderId, userId1), eq(messages.receiverId, userId2)),
+          and(eq(messages.senderId, userId2), eq(messages.receiverId, userId1))
+        )
+      )
+      .orderBy(asc(messages.createdAt));
+  }
+
+  async createMessage(message: InsertMessage): Promise<Message> {
     const [newMessage] = await db.insert(messages).values(message).returning();
-    const user = await this.getUser(newMessage.userId);
-    return { ...newMessage, user: user! };
+    return newMessage;
   }
 }
 
