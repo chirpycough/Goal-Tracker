@@ -19,7 +19,8 @@ export function ChatRoom() {
     if (u.id === currentUser?.id) return false;
     const lastSeen = new Date(u.lastSeen).getTime();
     const now = new Date().getTime();
-    return (now - lastSeen) < 30000; // Online if seen in last 30s
+    // Online if seen in last 2 minutes to be more lenient during testing
+    return (now - lastSeen) < 120000; 
   }) || [];
 
   return (

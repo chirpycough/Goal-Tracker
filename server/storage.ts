@@ -1,6 +1,6 @@
 import { db } from "./db";
-import { videos, users, type InsertVideo, type UpdateVideoRequest, type VideoResponse, type User, type InsertUser } from "@shared/schema";
-import { eq, desc } from "drizzle-orm";
+import { videos, users, messages, type InsertVideo, type UpdateVideoRequest, type VideoResponse, type User, type InsertUser, type Message, type InsertMessage } from "@shared/schema";
+import { eq, desc, and, or, asc } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 
