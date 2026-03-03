@@ -12,6 +12,10 @@ export function ChatRoom() {
   
   const { data: allUsers, isLoading } = useQuery<User[]>({
     queryKey: ["/api/users"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/users");
+      return res.json();
+    },
     refetchInterval: 5000,
   });
 

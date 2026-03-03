@@ -22,11 +22,19 @@ export default function ChatPage() {
 
   const { data: otherUser } = useQuery<User>({
     queryKey: [`/api/users`],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/users");
+      return res.json();
+    },
     select: (users: User[]) => users.find(u => u.id === Number(id)),
   });
 
   const { data: messages, isLoading } = useQuery<Message[]>({
     queryKey: [`/api/messages/${id}`],
+    queryFn: async () => {
+      const res = await apiRequest("GET", `/api/messages/${id}`);
+      return res.json();
+    },
     refetchInterval: 3000,
   });
 
