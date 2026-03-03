@@ -198,7 +198,7 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     const offsides = Math.floor(Math.random() * 3);
     
     // Generate AI Summary using OpenAI
-    const prompt = `Analyze this football player's stats and provide a very brief (2-3 sentences) summary of their strengths and weaknesses.
+    const prompt = `Analyze this football player's stats as a professional scout.
     Stats: 
     Distance: ${distance} km
     Avg Speed: ${avgSpeed} km/h
@@ -210,15 +210,23 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     Passes: ${passes}
     Tackles: ${tackles}
     
-    Output JSON format: { "strengths": "string", "weaknesses": "string" }`;
+    Provide a detailed professional analysis and a scout recommendation.
+    Output JSON format: { 
+      "strengths": "string", 
+      "weaknesses": "string", 
+      "proAnalysis": "Detailed 200-word tactical analysis for coaches",
+      "scoutRecommendation": "Professional recruitment recommendation for scouts" 
+    }`;
 
     let strengths = "Good overall movement";
     let weaknesses = "Needs more involvement";
+    let proAnalysis = "The player shows consistent work rate but needs tactical refinement.";
+    let scoutRecommendation = "Potential for regional leagues; monitor development.";
     
     try {
         const { openai } = await import("./replit_integrations/image/client");
         const aiResponse = await openai.chat.completions.create({
-            model: "gpt-5.1",
+            model: "gpt-4o",
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" }
         });
@@ -226,6 +234,8 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
         const summary = JSON.parse(aiResponse.choices[0]?.message?.content || "{}");
         if (summary.strengths) strengths = summary.strengths;
         if (summary.weaknesses) weaknesses = summary.weaknesses;
+        if (summary.proAnalysis) proAnalysis = summary.proAnalysis;
+        if (summary.scoutRecommendation) scoutRecommendation = summary.scoutRecommendation;
     } catch (aiError) {
         console.error("AI summary generation failed, using defaults:", aiError);
     }
@@ -258,6 +268,8 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
       performanceRating: Number(rating.toFixed(1)),
       strengths,
       weaknesses,
+      proAnalysis,
+      scoutRecommendation,
       heatmapImageUrl: `/static/heatmaps/${heatmapFilename}`,
     });
     

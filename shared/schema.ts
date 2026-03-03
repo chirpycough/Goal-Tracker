@@ -31,6 +31,8 @@ export const videos = pgTable("videos", {
   performanceRating: doublePrecision("performance_rating"),
   strengths: text("strengths"),
   weaknesses: text("weaknesses"),
+  proAnalysis: text("pro_analysis"),
+  scoutRecommendation: text("scout_recommendation"),
   heatmapImageUrl: text("heatmap_image_url"),
   
   // Stored JSON data for raw coordinates if needed

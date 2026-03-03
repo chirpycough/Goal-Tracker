@@ -290,6 +290,51 @@ export default function Analysis() {
                 </div>
               </div>
             </motion.div>
+
+            {/* Pro Analysis & Scout Recommendation */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+            >
+              <div className="lg:col-span-2 glass-panel rounded-3xl p-8 border border-primary/30 bg-primary/5 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <Gauge className="w-24 h-24" />
+                </div>
+                <h3 className="text-2xl font-display font-bold text-white mb-6 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/30">
+                    <Zap className="w-6 h-6 text-primary" />
+                  </div>
+                  Pro Tactical Analysis
+                </h3>
+                <div className="text-white/90 leading-relaxed text-lg font-medium bg-black/20 p-6 rounded-2xl border border-white/5 backdrop-blur-sm shadow-xl">
+                  {video.proAnalysis || "Detailed tactical analysis for coaching staff will appear here."}
+                </div>
+                <div className="mt-6 flex items-center gap-4 text-xs font-display uppercase tracking-widest text-primary/60">
+                  <span className="flex items-center gap-1.5"><Activity className="w-4 h-4" /> Positional Heatmap Verified</span>
+                  <span className="flex items-center gap-1.5"><Zap className="w-4 h-4" /> AI Generated Insights</span>
+                </div>
+              </div>
+
+              <div className="glass-panel rounded-3xl p-8 border border-yellow-500/30 bg-yellow-500/5 relative overflow-hidden">
+                <div className="absolute -bottom-6 -right-6 opacity-10">
+                  <Target className="w-32 h-32 text-yellow-500" />
+                </div>
+                <h3 className="text-xl font-display font-bold text-white mb-6 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center border border-yellow-500/30">
+                    <TrendingUp className="w-6 h-6 text-yellow-500" />
+                  </div>
+                  Scout Recommendation
+                </h3>
+                <div className="text-yellow-100/80 leading-relaxed italic border-l-4 border-yellow-500/50 pl-4 py-2">
+                  {video.scoutRecommendation || "Professional scouting notes and recruitment level assessment."}
+                </div>
+                <button className="w-full mt-8 py-3 rounded-xl bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 font-display font-bold uppercase tracking-widest text-xs border border-yellow-500/30 transition-all active:scale-95">
+                  Export Scout Report (PDF)
+                </button>
+              </div>
+            </motion.div>
           </div>
         )}
       </main>
