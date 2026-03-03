@@ -35,7 +35,7 @@ export default function ChatPage() {
       const res = await apiRequest("GET", `/api/messages/${id}`);
       return res.json();
     },
-    refetchInterval: 3000,
+    refetchInterval: 1000,
   });
 
   const sendMessageMutation = useMutation({

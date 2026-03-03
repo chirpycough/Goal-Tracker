@@ -57,7 +57,7 @@ export async function registerRoutes(
   app.get("/api/users", requireAuth, async (req, res) => {
     try {
       await storage.updateLastSeen(req.user!.id);
-      const allUsers = await storage.getUsers();
+      const allUsers = await storage.getUsers(req.user!.id);
       res.json(allUsers);
     } catch (error) {
       console.error("Error fetching users:", error);

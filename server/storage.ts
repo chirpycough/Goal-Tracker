@@ -88,8 +88,24 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
-  async getUsers(): Promise<User[]> {
-    return await db.select().from(users);
+  async getUsers(currentUserId?: number): Promise<(User & { unreadCount?: number })[]> {
+    const allUsers = await db.select().from(users);
+    
+    if (!currentUserId) return allUsers;
+
+    const unreadCounts = await db
+      .select({
+        senderId: messages.senderId,
+        count: db.$count(messages, and(eq(messages.receiverId, currentUserId), eq(messages.isRead, false)))
+      })
+      .from(messages)
+      .where(eq(messages.receiverId, currentUserId))
+      .groupBy(messages.senderId);
+
+    return allUsers.map(user => ({
+      ...user,
+      unreadCount: unreadCounts.find(c => c.senderId === user.id)?.count || 0
+    }));
   }
 
   async updateLastSeen(id: number): Promise<void> {

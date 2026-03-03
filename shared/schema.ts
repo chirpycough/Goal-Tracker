@@ -76,6 +76,8 @@ export type UpdateVideoRequest = Partial<typeof videos.$inferInsert>;
 export type VideoResponse = Video;
 export type VideoListResponse = Video[];
 
+export type UserWithUnread = User & { unreadCount: number };
+
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
