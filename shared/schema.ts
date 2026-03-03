@@ -33,6 +33,15 @@ export const videos = pgTable("videos", {
   weaknesses: text("weaknesses"),
   proAnalysis: text("pro_analysis"),
   scoutRecommendation: text("scout_recommendation"),
+  
+  // New monetization features
+  marketValue: text("market_value"),
+  similarProPlayer: text("similar_pro_player"),
+  tacticalRole: text("tactical_role"),
+  potentialCeiling: text("potential_ceiling"), // e.g., 'Top 5 Leagues', 'National Team', etc.
+  workRate: text("work_rate"), // 'High/High', 'Medium/Low', etc.
+  injuryRisk: text("injury_risk"), // 'Low', 'Moderate', 'High'
+  
   heatmapImageUrl: text("heatmap_image_url"),
   
   // Stored JSON data for raw coordinates if needed

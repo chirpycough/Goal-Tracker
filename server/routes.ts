@@ -222,17 +222,31 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     Tackles: ${tackles}
     
     Provide a detailed professional analysis and a scout recommendation.
+    Also include market valuation, a similar professional player comparison, tactical role (e.g. "Inverted Winger"), potential ceiling, work rate, and injury risk assessment.
+    
     Output JSON format: { 
       "strengths": "string", 
       "weaknesses": "string", 
       "proAnalysis": "Detailed 200-word tactical analysis for coaches",
-      "scoutRecommendation": "Professional recruitment recommendation for scouts" 
+      "scoutRecommendation": "Professional recruitment recommendation for scouts",
+      "marketValue": "€X.XM",
+      "similarProPlayer": "Name of a famous pro player",
+      "tacticalRole": "Specific role name",
+      "potentialCeiling": "Predicted career level",
+      "workRate": "Attacking/Defensive work rate",
+      "injuryRisk": "Low/Moderate/High"
     }`;
 
     let strengths = "Good overall movement";
     let weaknesses = "Needs more involvement";
     let proAnalysis = "The player shows consistent work rate but needs tactical refinement.";
     let scoutRecommendation = "Potential for regional leagues; monitor development.";
+    let marketValue = "€150K - €300K";
+    let similarProPlayer = "Pending Analysis";
+    let tacticalRole = "Dynamic Attacker";
+    let potentialCeiling = "Professional Tier 2";
+    let workRate = "Medium / Medium";
+    let injuryRisk = "Low";
     
     try {
         const { openai } = await import("./replit_integrations/image/client");
@@ -247,6 +261,12 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
         if (summary.weaknesses) weaknesses = summary.weaknesses;
         if (summary.proAnalysis) proAnalysis = summary.proAnalysis;
         if (summary.scoutRecommendation) scoutRecommendation = summary.scoutRecommendation;
+        if (summary.marketValue) marketValue = summary.marketValue;
+        if (summary.similarProPlayer) similarProPlayer = summary.similarProPlayer;
+        if (summary.tacticalRole) tacticalRole = summary.tacticalRole;
+        if (summary.potentialCeiling) potentialCeiling = summary.potentialCeiling;
+        if (summary.workRate) workRate = summary.workRate;
+        if (summary.injuryRisk) injuryRisk = summary.injuryRisk;
     } catch (aiError) {
         console.error("AI summary generation failed, using defaults:", aiError);
     }
@@ -281,6 +301,12 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
       weaknesses,
       proAnalysis,
       scoutRecommendation,
+      marketValue,
+      similarProPlayer,
+      tacticalRole,
+      potentialCeiling,
+      workRate,
+      injuryRisk,
       heatmapImageUrl: `/static/heatmaps/${heatmapFilename}`,
     });
     
