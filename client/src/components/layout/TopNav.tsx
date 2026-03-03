@@ -1,13 +1,52 @@
 import { Link } from "wouter";
-import { Activity, PlaySquare, LogOut } from "lucide-react";
+import { Activity, PlaySquare, LogOut, Bell } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { User } from "@shared/schema";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function TopNav() {
   const { user, logoutMutation } = useAuth();
+  const [notification, setNotification] = useState<string | null>(null);
+
+  const { data: users } = useQuery<User[]>({
+    queryKey: ["/api/users"],
+    enabled: !!user,
+    refetchInterval: 5000,
+  });
+
+  const [lastUserCount, setLastUserCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (users) {
+      if (lastUserCount !== null && users.length > lastUserCount) {
+        const newUser = users[users.length - 1];
+        setNotification(`New scout joined: ${newUser.username}!`);
+        setTimeout(() => setNotification(null), 5000);
+      }
+      setLastUserCount(users.length);
+    }
+  }, [users, lastUserCount]);
 
   return (
     <nav className="sticky top-0 z-50 w-full glass-panel border-b border-white/5">
+      <AnimatePresence>
+        {notification && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-primary/20 border-b border-primary/30 overflow-hidden"
+          >
+            <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-center gap-2 text-primary font-display font-bold text-sm">
+              <Bell className="w-4 h-4 animate-bounce" />
+              {notification}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link href="/" className="flex items-center gap-3 group cursor-pointer">

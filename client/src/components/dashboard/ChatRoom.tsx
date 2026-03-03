@@ -60,9 +60,11 @@ export function ChatRoom() {
                   <div className="flex items-center gap-4 p-4 rounded-2xl hover:bg-white/10 cursor-pointer transition-all border border-transparent hover:border-white/10 group shadow-lg hover:shadow-primary/5 active:scale-[0.98] relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/0 to-primary/0 group-hover:from-primary/5 transition-all duration-500" />
                     <div className="relative z-10">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-primary font-bold border border-primary/20 shadow-inner text-lg group-hover:scale-105 group-hover:border-primary/40 transition-all duration-300">
-                        {u.username[0].toUpperCase()}
-                      </div>
+                      <Link href={`/profile/${u.id}`}>
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-primary font-bold border border-primary/20 shadow-inner text-lg group-hover:scale-105 group-hover:border-primary/40 transition-all duration-300 cursor-pointer">
+                          {u.username[0].toUpperCase()}
+                        </div>
+                      </Link>
                       {u.isOnline && (
                         <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-primary border-4 border-[#0a0a0a] rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
                       )}

@@ -87,6 +87,17 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/users/:id", requireAuth, async (req, res) => {
+    try {
+      const user = await storage.getUser(Number(req.params.id));
+      if (!user) return res.status(404).json({ message: "User not found" });
+      const { password, ...safeUser } = user;
+      res.json(safeUser);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
   // --- API Routes ---
 
   app.get(api.videos.list.path, requireAuth, async (req, res) => {

@@ -19,6 +19,7 @@ function Router() {
       <ProtectedRoute path="/" component={Dashboard} />
       <ProtectedRoute path="/analysis/:id" component={Analysis} />
       <ProtectedRoute path="/profile" component={Profile} />
+      <ProtectedRoute path="/profile/:id" component={Profile} />
       <ProtectedRoute path="/chat/:id" component={ChatPage} />
       <Route path="/auth" component={AuthPage} />
       {/* Fallback to 404 */}
