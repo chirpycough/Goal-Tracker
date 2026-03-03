@@ -99,7 +99,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getMessages(userId1: number, userId2: number): Promise<Message[]> {
-    return await db
+    const msgs = await db
       .select()
       .from(messages)
       .where(
@@ -109,6 +109,19 @@ export class DatabaseStorage implements IStorage {
         )
       )
       .orderBy(asc(messages.createdAt));
+    
+    // Mark as read if current user is receiver
+    await db.update(messages)
+      .set({ isRead: true })
+      .where(
+        and(
+          eq(messages.senderId, userId2),
+          eq(messages.receiverId, userId1),
+          eq(messages.isRead, false)
+        )
+      );
+      
+    return msgs;
   }
 
   async createMessage(message: InsertMessage): Promise<Message> {

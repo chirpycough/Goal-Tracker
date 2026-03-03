@@ -14,7 +14,19 @@ export function ChatRoom() {
     queryKey: ["/api/users"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/users");
-      return res.json();
+      const users = await res.json();
+      // Fetch unread counts for each user
+      const unreadPromises = users.map(async (u: User) => {
+        const mRes = await apiRequest("GET", `/api/messages/${u.id}`);
+        const msgs = await mRes.json();
+        const unreadCount = msgs.filter((m: any) => m.receiverId === currentUser?.id && !m.isRead).length;
+        return { userId: u.id, unreadCount };
+      });
+      const unreadData = await Promise.all(unreadPromises);
+      return users.map((u: User) => ({
+        ...u,
+        unreadCount: unreadData.find(d => d.userId === u.id)?.unreadCount || 0
+      }));
     },
     refetchInterval: 5000,
   });
@@ -47,19 +59,29 @@ export function ChatRoom() {
             ) : (
               onlineUsers.map((u) => (
                 <Link key={u.id} href={`/chat/${u.id}`}>
-                  <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer transition-colors border border-transparent hover:border-white/10 group">
+                  <div className="flex items-center gap-4 p-4 rounded-2xl hover:bg-white/10 cursor-pointer transition-all border border-transparent hover:border-white/10 group shadow-lg hover:shadow-primary/5 active:scale-[0.98]">
                     <div className="relative">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-primary font-bold border border-primary/20 shadow-inner text-lg group-hover:scale-105 transition-transform">
                         {u.username[0].toUpperCase()}
                       </div>
-                      <Circle className="w-3 h-3 text-primary fill-primary absolute -bottom-0.5 -right-0.5 border-2 border-background rounded-full" />
+                      <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-primary border-4 border-[#0a0a0a] rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
                     </div>
                     <div className="flex-1 overflow-hidden">
-                      <p className="font-medium text-white truncate group-hover:text-primary transition-colors">
-                        {u.username}
-                      </p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        Online
+                      <div className="flex items-center justify-between mb-0.5">
+                        <p className="font-display text-base text-white truncate group-hover:text-primary transition-colors">
+                          {u.username}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          {u.unreadCount > 0 && (
+                            <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-bounce">
+                              {u.unreadCount}
+                            </span>
+                          )}
+                          <span className="text-[10px] uppercase tracking-widest text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity">Chat</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground/60 truncate flex items-center gap-1.5 font-medium uppercase tracking-tighter">
+                        Active in field
                       </p>
                     </div>
                   </div>

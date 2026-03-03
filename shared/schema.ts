@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, doublePrecision, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, doublePrecision, timestamp, jsonb, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -101,6 +101,7 @@ export const messages = pgTable("messages", {
   receiverId: integer("receiver_id").notNull(),
   content: text("content").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  isRead: boolean("is_read").default(false).notNull(),
 });
 
 export const insertMessageSchema = createInsertSchema(messages).omit({ id: true, createdAt: true });

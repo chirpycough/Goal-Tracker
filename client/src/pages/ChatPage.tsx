@@ -64,38 +64,56 @@ export default function ChatPage() {
     sendMessageMutation.mutate(content);
   };
 
+  const renderStatus = () => {
+    if (!otherUser) return null;
+    const lastSeen = new Date(otherUser.lastSeen).getTime();
+    const now = new Date().getTime();
+    const isOnline = (now - lastSeen) < 300000;
+    
+    return (
+      <div>
+        <CardTitle className="text-xl font-display">{otherUser.username}</CardTitle>
+        <p className={`text-xs flex items-center gap-1 ${isOnline ? "text-primary" : "text-muted-foreground"}`}>
+          <div className={`w-1.5 h-1.5 rounded-full ${isOnline ? "bg-primary animate-pulse" : "bg-muted-foreground"}`} />
+          {isOnline ? "Online" : "Offline"}
+        </p>
+      </div>
+    );
+  };
+
   if (!otherUser) return null;
 
   return (
     <div className="min-h-screen bg-background text-white font-body flex flex-col">
       <TopNav />
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-8 flex flex-col">
-        <Card className="glass-panel border-white/5 flex-1 flex flex-col overflow-hidden">
-          <CardHeader className="border-b border-white/5 bg-white/5 flex flex-row items-center gap-4">
+        <Card className="glass-panel border-white/5 flex-1 flex flex-col overflow-hidden shadow-2xl">
+          <CardHeader className="border-b border-white/5 bg-white/10 flex flex-row items-center gap-4 py-4">
             <Link href="/">
-              <Button variant="ghost" size="icon" className="hover:bg-white/10">
+              <Button variant="ghost" size="icon" className="hover:bg-white/10 transition-colors">
                 <ChevronLeft className="w-5 h-5" />
               </Button>
             </Link>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold border border-primary/30">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-primary font-bold border border-primary/30 shadow-inner text-lg">
                 {otherUser.username[0].toUpperCase()}
               </div>
-              <div>
-                <CardTitle className="text-xl font-display">{otherUser.username}</CardTitle>
-                <p className="text-xs text-primary flex items-center gap-1">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  Online
-                </p>
-              </div>
+              {renderStatus()}
             </div>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
-            <ScrollArea className="flex-1 p-4" ref={scrollRef}>
-              <div className="space-y-4">
+          <CardContent className="flex-1 flex flex-col p-0 overflow-hidden relative bg-black/20">
+            <ScrollArea className="flex-1 p-6" ref={scrollRef}>
+              <div className="space-y-6">
                 {isLoading ? (
-                  <div className="flex justify-center p-4">
-                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  <div className="flex flex-col items-center justify-center h-full gap-2 opacity-50">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    <span className="text-xs uppercase tracking-widest font-display">Loading encryption...</span>
+                  </div>
+                ) : messages?.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-20 opacity-30">
+                    <MessageSquare className="w-16 h-16 mb-4" />
+                    <p className="text-sm font-display uppercase tracking-widest">No conversation history</p>
+                    <p className="text-xs">Start the match talk now</p>
                   </div>
                 ) : (
                   messages?.map((msg) => (
@@ -103,18 +121,18 @@ export default function ChatPage() {
                       key={msg.id}
                       className={`flex flex-col ${
                         msg.senderId === currentUser?.id ? "items-end" : "items-start"
-                      }`}
+                      } animate-in fade-in slide-in-from-bottom-2 duration-300`}
                     >
                       <div
-                        className={`px-4 py-2 rounded-2xl text-sm max-w-[80%] ${
+                        className={`px-4 py-2.5 rounded-2xl text-sm max-w-[75%] shadow-lg ${
                           msg.senderId === currentUser?.id
-                            ? "bg-primary text-primary-foreground rounded-tr-none"
-                            : "bg-white/10 text-white rounded-tl-none"
+                            ? "bg-primary text-primary-foreground rounded-tr-none font-medium"
+                            : "bg-white/10 text-white rounded-tl-none border border-white/5 backdrop-blur-md"
                         }`}
                       >
                         {msg.content}
                       </div>
-                      <span className="text-[10px] text-muted-foreground/60 mt-1">
+                      <span className="text-[10px] text-muted-foreground/40 mt-1.5 px-1 font-display uppercase tracking-tighter">
                         {format(new Date(msg.createdAt), "HH:mm")}
                       </span>
                     </div>
@@ -124,24 +142,25 @@ export default function ChatPage() {
             </ScrollArea>
             <form
               onSubmit={handleSubmit}
-              className="p-4 border-t border-white/5 bg-white/5 flex gap-2"
+              className="p-4 border-t border-white/5 bg-white/10 backdrop-blur-xl flex gap-3"
             >
               <Input
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="Type a message..."
-                className="bg-white/5 border-white/10 focus-visible:ring-primary"
+                placeholder="Message securely..."
+                className="bg-white/5 border-white/10 focus-visible:ring-primary h-12 text-sm placeholder:text-white/20"
                 disabled={sendMessageMutation.isPending}
               />
               <Button
                 type="submit"
                 size="icon"
+                className="h-12 w-12 rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-95"
                 disabled={!content.trim() || sendMessageMutation.isPending}
               >
                 {sendMessageMutation.isPending ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
-                  <Send className="w-4 h-4" />
+                  <Send className="w-5 h-5" />
                 )}
               </Button>
             </form>
