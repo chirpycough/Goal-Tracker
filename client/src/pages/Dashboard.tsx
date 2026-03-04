@@ -22,8 +22,8 @@ export default function Dashboard() {
           <div className="lg:col-span-2">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-12">
               <div>
-                <h1 className="text-4xl font-display font-bold text-white mb-2">My Analyses</h1>
-                <p className="text-muted-foreground text-lg">Manage and review your processed match footage.</p>
+                <h1 className="text-5xl font-display font-bold text-white mb-3">My Analyses</h1>
+                <p className="text-muted-foreground text-xl">Manage and review your processed match footage.</p>
               </div>
               
               <button
@@ -82,11 +82,11 @@ export default function Dashboard() {
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
-                      <h3 className="font-display font-bold text-xl text-white mb-1 truncate" title={video.originalName}>
+                      <h3 className="font-display font-bold text-2xl text-white mb-2 truncate" title={video.originalName}>
                         {video.originalName}
                       </h3>
-                      <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5" />
+                      <p className="text-base text-muted-foreground flex items-center gap-1.5">
+                        <Clock className="w-4 h-4" />
                         {format(new Date(video.uploadDate), "MMM d, yyyy")}
                       </p>
                     </div>
@@ -105,10 +105,10 @@ export default function Dashboard() {
                       </div>
                       <Link 
                         href={`/analysis/${video.id}`}
-                        className="flex items-center gap-1 text-sm font-semibold text-white/70 hover:text-white transition-colors"
+                        className="flex items-center gap-1 text-base font-semibold text-white/70 hover:text-white transition-colors"
                       >
                         View Report
-                        <ChevronRight className="w-4 h-4" />
+                        <ChevronRight className="w-5 h-5" />
                       </Link>
                     </div>
                   </motion.div>

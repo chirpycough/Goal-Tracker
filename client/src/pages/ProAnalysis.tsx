@@ -82,29 +82,29 @@ export default function ProAnalysis() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                <div className="glass-panel p-6 rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 to-transparent">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-primary/60 mb-2">Market Value</p>
-                  <p className="text-3xl font-display font-bold text-white">{video.marketValue || "N/A"}</p>
+                  <p className="text-3xl font-display font-bold text-white">{video.marketValue || "Calculating..."}</p>
                </div>
                <div className="glass-panel p-6 rounded-3xl border border-white/10">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2">Pro Comparison</p>
-                  <p className="text-2xl font-display font-bold text-white">{video.similarProPlayer || "N/A"}</p>
+                  <p className="text-2xl font-display font-bold text-white">{video.similarProPlayer || "Calculating..."}</p>
                </div>
                <div className="glass-panel p-6 rounded-3xl border border-white/10">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2">Potential Ceiling</p>
-                  <p className="text-2xl font-display font-bold text-white">{video.potentialCeiling || "N/A"}</p>
+                  <p className="text-2xl font-display font-bold text-white">{video.potentialCeiling || "Assessing..."}</p>
                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 glass-panel rounded-3xl p-8 border border-white/5">
                 <h3 className="text-xl font-display font-bold text-white mb-6">Tactical Breakdown</h3>
-                <div className="text-white/90 leading-relaxed text-lg bg-black/30 p-8 rounded-2xl border border-white/10">
-                  {video.proAnalysis}
+                <div className="text-white/90 leading-relaxed text-xl bg-black/30 p-8 rounded-2xl border border-white/10">
+                  {video.proAnalysis || "Generating tactical insights..."}
                 </div>
               </div>
               <div className="glass-panel rounded-3xl p-8 border border-yellow-500/30 bg-yellow-500/5">
                 <h3 className="text-xl font-display font-bold text-white mb-6">Scout Verdict</h3>
-                <div className="text-yellow-100/80 italic border-l-4 border-yellow-500/40 pl-6 py-2 text-lg">
-                  {video.scoutRecommendation}
+                <div className="text-yellow-100/80 italic border-l-4 border-yellow-500/40 pl-6 py-2 text-xl">
+                  {video.scoutRecommendation || "Finalizing scout verdict..."}
                 </div>
               </div>
             </div>
@@ -120,18 +120,18 @@ export default function ProAnalysis() {
                     </RadarChart>
                   </ResponsiveContainer>
                  </div>
-                 <div className="w-full md:w-1/2 space-y-4">
+                 <div className="w-full md:w-1/2 space-y-4 text-lg">
                    <div className="flex justify-between border-b border-white/5 pb-2">
                      <span className="text-white/60">Tactical Role</span>
-                     <span className="text-white font-bold">{video.tacticalRole}</span>
+                     <span className="text-white font-bold">{video.tacticalRole || "Analyzing..."}</span>
                    </div>
                    <div className="flex justify-between border-b border-white/5 pb-2">
                      <span className="text-white/60">Work Rate</span>
-                     <span className="text-white font-bold">{video.workRate}</span>
+                     <span className="text-white font-bold">{video.workRate || "Analyzing..."}</span>
                    </div>
                    <div className="flex justify-between border-b border-white/5 pb-2">
                      <span className="text-white/60">Injury Risk</span>
-                     <span className="text-white font-bold">{video.injuryRisk}</span>
+                     <span className="text-white font-bold">{video.injuryRisk || "Analyzing..."}</span>
                    </div>
                  </div>
               </div>
