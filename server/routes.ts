@@ -191,8 +191,8 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     // For this implementation, we will simulate the Python processing logic 
     // taking some time, and then we will use OpenAI to generate the AI summary.
     
-    // Simulate processing time (e.g. 5-10 seconds)
-    await new Promise(resolve => setTimeout(resolve, 8000));
+    // Simulate processing time (e.g. 2-3 seconds for faster feedback)
+    await new Promise(resolve => setTimeout(resolve, 3000));
     
     // Mock calculated stats
     const distance = (Math.random() * 5 + 4).toFixed(2); // 4-9 km
