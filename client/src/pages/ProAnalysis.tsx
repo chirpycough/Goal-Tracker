@@ -58,6 +58,11 @@ export default function ProAnalysis() {
     { subject: 'Defending', A: Math.min((video.tackles || 0) / 6 * 100, 100) },
   ] : [];
 
+  const getMetricPercent = (subject: string) => {
+    const data = radarData.find(d => d.subject === subject);
+    return data ? `${Math.round(data.A)}%` : "0%";
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <TopNav />
@@ -76,6 +81,7 @@ export default function ProAnalysis() {
           <div className="py-20 text-center">
             <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
             <h2 className="text-xl font-bold text-white">Analysis in Progress</h2>
+            <p className="text-muted-foreground mt-2">Our scouts are finalizing your report. This usually takes less than 60 seconds.</p>
           </div>
         ) : (
           <div className="space-y-8">
@@ -94,16 +100,35 @@ export default function ProAnalysis() {
                </div>
             </div>
 
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="glass-panel rounded-3xl p-8 border border-green-500/20 bg-green-500/5">
+                <h3 className="text-xl font-display font-bold text-green-400 mb-4 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5" /> Key Strengths
+                </h3>
+                <div className="text-white/80 leading-relaxed whitespace-pre-wrap">
+                  {video.strengths || "Analyzing strengths..."}
+                </div>
+              </div>
+              <div className="glass-panel rounded-3xl p-8 border border-red-500/20 bg-red-500/5">
+                <h3 className="text-xl font-display font-bold text-red-400 mb-4 flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5" /> Development Areas
+                </h3>
+                <div className="text-white/80 leading-relaxed whitespace-pre-wrap">
+                  {video.weaknesses || "Analyzing weaknesses..."}
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 glass-panel rounded-3xl p-8 border border-white/5">
                 <h3 className="text-xl font-display font-bold text-white mb-6">Tactical Breakdown</h3>
-                <div className="text-white/90 leading-relaxed text-xl bg-black/30 p-8 rounded-2xl border border-white/10">
+                <div className="text-white/90 leading-relaxed text-lg bg-black/30 p-8 rounded-2xl border border-white/10">
                   {video.proAnalysis || "Generating tactical insights..."}
                 </div>
               </div>
               <div className="glass-panel rounded-3xl p-8 border border-yellow-500/30 bg-yellow-500/5">
                 <h3 className="text-xl font-display font-bold text-white mb-6">Scout Verdict</h3>
-                <div className="text-yellow-100/80 italic border-l-4 border-yellow-500/40 pl-6 py-2 text-xl">
+                <div className="text-yellow-100/80 italic border-l-4 border-yellow-500/40 pl-6 py-2 text-lg">
                   {video.scoutRecommendation || "Finalizing scout verdict..."}
                 </div>
               </div>
@@ -121,6 +146,24 @@ export default function ProAnalysis() {
                   </ResponsiveContainer>
                  </div>
                  <div className="w-full md:w-1/2 space-y-4 text-lg">
+                   <div className="grid grid-cols-2 gap-4 mb-6">
+                     <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                       <p className="text-xs text-white/40 uppercase font-bold mb-1">Stamina</p>
+                       <p className="text-2xl font-display font-bold text-white">{getMetricPercent('Stamina')}</p>
+                     </div>
+                     <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                       <p className="text-xs text-white/40 uppercase font-bold mb-1">Vision</p>
+                       <p className="text-2xl font-display font-bold text-white">{getMetricPercent('Vision')}</p>
+                     </div>
+                     <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                       <p className="text-xs text-white/40 uppercase font-bold mb-1">Attacking</p>
+                       <p className="text-2xl font-display font-bold text-white">{getMetricPercent('Attacking')}</p>
+                     </div>
+                     <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                       <p className="text-xs text-white/40 uppercase font-bold mb-1">Speed</p>
+                       <p className="text-2xl font-display font-bold text-white">{getMetricPercent('Speed')}</p>
+                     </div>
+                   </div>
                    <div className="flex justify-between border-b border-white/5 pb-2">
                      <span className="text-white/60">Tactical Role</span>
                      <span className="text-white font-bold">{video.tacticalRole || "Analyzing..."}</span>

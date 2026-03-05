@@ -191,8 +191,8 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     // For this implementation, we will simulate the Python processing logic 
     // taking some time, and then we will use OpenAI to generate the AI summary.
     
-    // Simulate processing time (e.g. 2-3 seconds for faster feedback)
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    // Simulate processing time (e.g. 1 second for faster feedback)
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Mock calculated stats
     const distance = (Math.random() * 5 + 4).toFixed(2); // 4-9 km
@@ -224,9 +224,14 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     Provide a detailed professional analysis and a scout recommendation.
     Also include market valuation, a similar professional player comparison, tactical role (e.g. "Inverted Winger"), potential ceiling, work rate, and injury risk assessment.
     
+    CRITICAL: Be extremely strict and objective in your assessment. Do not give high ratings or praise unless the stats truly warrant it.
+    Include an explicit "Strengths" section with at least 3 bullet points.
+    Include an explicit "Weaknesses" section with at least 3 bullet points.
+    Provide an in-depth tactical analysis (200 words).
+
     Output JSON format: { 
-      "strengths": "string", 
-      "weaknesses": "string", 
+      "strengths": "Bullet points of explicit strengths", 
+      "weaknesses": "Bullet points of explicit weaknesses", 
       "proAnalysis": "Detailed 200-word tactical analysis for coaches",
       "scoutRecommendation": "Professional recruitment recommendation for scouts",
       "marketValue": "€X.XM",
