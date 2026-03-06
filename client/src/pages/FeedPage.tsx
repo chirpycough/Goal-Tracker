@@ -86,10 +86,10 @@ export default function FeedPage() {
         });
         return;
       }
-      if (file.size < 3 * 1024 * 1024) {
+      if (file.size > 3 * 1024 * 1024) {
         toast({
-          title: "Resolution too low",
-          description: "For professional analysis, images must be at least 3MB.",
+          title: "File too large",
+          description: "Images must be less than 3MB.",
           variant: "destructive",
         });
         return;
@@ -115,54 +115,9 @@ export default function FeedPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0c] text-white">
       <TopNav />
-      <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        {/* Left Sidebar - Stats/Trends */}
-        <div className="hidden lg:block lg:col-span-3 space-y-6">
-          <Card className="bg-white/5 border-white/10 overflow-hidden">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2 text-primary">
-                <TrendingUp className="w-4 h-4" />
-                <span className="text-sm font-bold uppercase tracking-wider">Market Trends</span>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">Top Target</span>
-                <span className="font-mono text-primary">€42.5M</span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">Active Scouts</span>
-                <span className="font-mono">1,204</span>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2 text-primary">
-                <Users className="w-4 h-4" />
-                <span className="text-sm font-bold uppercase tracking-wider">Top Scouts</span>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold">
-                    {i}
-                  </div>
-                  <div className="text-xs">
-                    <div className="font-bold">Scout_Pro_{i}</div>
-                    <div className="text-muted-foreground">12 Active Reports</div>
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-
+      <div className="max-w-2xl mx-auto px-4 py-8">
         {/* Main Feed */}
-        <main className="lg:col-span-6 space-y-8">
+        <main className="space-y-8">
           <Card className="bg-white/5 border-white/10 shadow-2xl backdrop-blur-sm">
             <CardContent className="pt-6">
               <form
@@ -176,7 +131,7 @@ export default function FeedPage() {
                     </AvatarFallback>
                   </Avatar>
                   <Textarea
-                    placeholder="Share a scouting insight, transfer rumor, or tactical breakdown..."
+                    placeholder="What's on your mind?"
                     className="flex-1 bg-transparent border-none focus-visible:ring-0 resize-none min-h-[80px] text-lg placeholder:text-muted-foreground/50"
                     {...form.register("content")}
                   />
@@ -207,9 +162,6 @@ export default function FeedPage() {
                       >
                         <X className="h-4 w-4" />
                       </Button>
-                      <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[10px] font-mono text-white/80">
-                        HQ ANALYTICS READY
-                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -231,16 +183,7 @@ export default function FeedPage() {
                       onClick={() => fileInputRef.current?.click()}
                     >
                       <ImageIcon className="w-5 h-5 mr-2" />
-                      Media
-                    </Button>
-                    <Button 
-                      type="button"
-                      variant="ghost" 
-                      size="sm"
-                      className="text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full"
-                    >
-                      <Award className="w-5 h-5 mr-2" />
-                      Report
+                      Add Image (max 3MB)
                     </Button>
                   </div>
                   <Button 
@@ -252,7 +195,7 @@ export default function FeedPage() {
                     ) : (
                       <Send className="w-4 h-4" />
                     )}
-                    <span className="ml-2">Share Insight</span>
+                    <span className="ml-2">Post</span>
                   </Button>
                 </div>
               </form>
@@ -267,8 +210,7 @@ export default function FeedPage() {
             <div className="space-y-6">
               {posts?.length === 0 ? (
                 <div className="text-center py-20 bg-white/5 rounded-3xl border border-dashed border-white/10">
-                  <div className="text-muted-foreground mb-2 text-lg">No scouting data available.</div>
-                  <div className="text-sm text-muted-foreground/60">Be the first to analyze the next superstar.</div>
+                  <div className="text-muted-foreground mb-2 text-lg">Be the first to post</div>
                 </div>
               ) : (
                 posts?.map((post) => (
@@ -296,7 +238,6 @@ export default function FeedPage() {
                               {format(new Date(post.createdAt), "h:mm a")}
                             </div>
                           </div>
-                          <div className="text-[10px] text-primary/60 font-mono tracking-widest uppercase">Verified Scout</div>
                         </div>
                         <Button variant="ghost" size="icon" className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
                           <X className="w-4 h-4" />
@@ -312,7 +253,7 @@ export default function FeedPage() {
                           <div className="rounded-2xl overflow-hidden border border-white/10 shadow-inner">
                             <img
                               src={post.imageUrl}
-                              alt="Scouting Data"
+                              alt="Post Media"
                               className="w-full object-cover max-h-[500px] hover:scale-[1.02] transition-transform duration-700 cursor-pointer"
                             />
                           </div>
@@ -337,7 +278,7 @@ export default function FeedPage() {
                             <div className="p-2 rounded-full group-hover/btn:bg-white/5">
                               <Share2 className="w-4 h-4" />
                             </div>
-                            <span className="text-xs font-bold">Insights</span>
+                            <span className="text-xs font-bold">Share</span>
                           </button>
                         </div>
                       </CardContent>
@@ -348,27 +289,6 @@ export default function FeedPage() {
             </div>
           )}
         </main>
-
-        {/* Right Sidebar - Activity/Suggestions */}
-        <div className="hidden lg:block lg:col-span-3 space-y-6">
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader className="pb-2">
-              <span className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Scouting Network</span>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {[1, 2].map(i => (
-                <div key={i} className="flex items-center justify-between group cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                    <div className="text-sm font-medium group-hover:text-primary transition-colors">Live Match: Utd vs Liv</div>
-                  </div>
-                  <div className="text-[10px] text-muted-foreground font-mono">12:30</div>
-                </div>
-              ))}
-              <Button variant="outline" className="w-full border-white/10 bg-white/5 text-xs">View Global Map</Button>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   );
