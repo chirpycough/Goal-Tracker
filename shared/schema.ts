@@ -126,7 +126,7 @@ export type InsertMessage = z.infer<typeof insertMessageSchema>;
 export const posts = pgTable("posts", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
-  content: text("content").notNull(),
+  content: text("content"),
   imageUrl: text("image_url"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
