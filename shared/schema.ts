@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, doublePrecision, timestamp, jsonb, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp, boolean, doublePrecision, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -87,8 +87,6 @@ export type UpdateVideoRequest = Partial<typeof videos.$inferInsert>;
 export type VideoResponse = Video;
 export type VideoListResponse = Video[];
 
-export type UserWithUnread = User & { unreadCount: number };
-
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
@@ -108,6 +106,10 @@ export const users = pgTable("users", {
   lastSeen: timestamp("last_seen").defaultNow().notNull(),
 });
 
+export type User = typeof users.$inferSelect;
+export const insertUserSchema = createInsertSchema(users).omit({ id: true, lastSeen: true });
+export type InsertUser = z.infer<typeof insertUserSchema>;
+
 export const messages = pgTable("messages", {
   id: serial("id").primaryKey(),
   senderId: integer("sender_id").notNull(),
@@ -116,6 +118,10 @@ export const messages = pgTable("messages", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   isRead: boolean("is_read").default(false).notNull(),
 });
+
+export const insertMessageSchema = createInsertSchema(messages).omit({ id: true, createdAt: true });
+export type Message = typeof messages.$inferSelect;
+export type InsertMessage = z.infer<typeof insertMessageSchema>;
 
 export const posts = pgTable("posts", {
   id: serial("id").primaryKey(),

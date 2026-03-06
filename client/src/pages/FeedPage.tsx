@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Post, User } from "@shared/schema";
@@ -14,9 +15,12 @@ import { Loader2, Image as ImageIcon, Send } from "lucide-react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useToast } from "@/hooks/use-toast";
 
 export default function FeedPage() {
   const { user } = useAuth();
+  const { toast } = useToast();
+  
   const { data: posts, isLoading } = useQuery<(Post & { user: User })[]>({
     queryKey: ["/api/posts"],
   });
@@ -37,6 +41,17 @@ export default function FeedPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
       form.reset();
+      toast({
+        title: "Post created",
+        description: "Your update has been shared with other scouts.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to post",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
