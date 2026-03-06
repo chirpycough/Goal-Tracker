@@ -133,6 +133,10 @@ export const posts = pgTable("posts", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const insertPostSchema = createInsertSchema(posts).omit({ id: true, createdAt: true });
+export const insertPostSchema = createInsertSchema(posts).omit({ 
+  id: true, 
+  userId: true, 
+  createdAt: true 
+});
 export type Post = typeof posts.$inferSelect;
 export type InsertPost = z.infer<typeof insertPostSchema>;

@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
 
 export default function FeedPage() {
   const { user } = useAuth();
@@ -31,9 +32,6 @@ export default function FeedPage() {
   });
 
   const form = useForm({
-    resolver: zodResolver(insertPostSchema.extend({
-      content: insertPostSchema.shape.content.optional(),
-    })),
     defaultValues: {
       content: "",
     },
@@ -42,17 +40,20 @@ export default function FeedPage() {
   const postMutation = useMutation({
     mutationFn: async (data: { content?: string }) => {
       const formData = new FormData();
-      if (data.content) formData.append("content", data.content);
-      if (selectedImage) formData.append("image", selectedImage);
+      formData.append("content", data.content || "");
+      if (selectedImage) {
+        formData.append("image", selectedImage);
+      }
 
       const res = await fetch("/api/posts", {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
 
       if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to create post");
+        const errorData = await res.json().catch(() => ({ message: "Failed to create post" }));
+        throw new Error(errorData.message || "Failed to create post");
       }
       return res.json();
     },
@@ -86,10 +87,10 @@ export default function FeedPage() {
         });
         return;
       }
-      if (file.size > 3 * 1024 * 1024) {
+      if (file.size > 5 * 1024 * 1024) { // Increased to 5MB
         toast({
           title: "File too large",
-          description: "Images must be less than 3MB.",
+          description: "Images must be less than 5MB.",
           variant: "destructive",
         });
         return;
@@ -184,11 +185,12 @@ export default function FeedPage() {
                       onClick={() => fileInputRef.current?.click()}
                     >
                       <ImageIcon className="w-5 h-5 mr-2" />
-                      Add Image (max 3MB)
+                      Add Image
                     </Button>
                   </div>
                   <Button 
-                    disabled={postMutation.isPending || (!form.watch("content") && !selectedImage)}
+                    type="submit"
+                    disabled={postMutation.isPending || (!form.watch("content")?.trim() && !selectedImage)}
                     className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 rounded-full font-bold shadow-lg shadow-primary/20"
                   >
                     {postMutation.isPending ? (

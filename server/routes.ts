@@ -111,7 +111,7 @@ export async function registerRoutes(
       const content = req.body.content;
       const file = req.file;
 
-      if (!content && !file) {
+      if (!content?.trim() && !file) {
         return res.status(400).json({ message: "Post must have content or an image" });
       }
 
@@ -127,8 +127,8 @@ export async function registerRoutes(
       });
 
       // Fetch the post with user info to return to the frontend
-      const posts = await storage.getPosts();
-      const newPost = posts.find(p => p.id === post.id);
+      const allPosts = await storage.getPosts();
+      const newPost = allPosts.find(p => p.id === post.id);
 
       res.status(201).json(newPost || post);
     } catch (error) {
