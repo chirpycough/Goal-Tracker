@@ -51,7 +51,7 @@ export default function ProAnalysis() {
   const isProcessing = video.status === 'pending' || video.status === 'processing';
   const radarData = video.status === 'completed' ? [
     { subject: 'Speed', A: Math.min(Math.max(((video.maxSpeedKmh || 25) - 25) / (35 - 25) * 100, 0), 100) },
-    { subject: 'Stamina', A: Math.min(Math.max(((video.distanceCoveredKm || 8) - 8) / (12 - 8) * 100, 0), 100) },
+    { subject: 'Stamina', A: Math.min(Math.max(((video.distanceCoveredKm || 5) - 5) / (12 - 5) * 100, 0), 100) },
     { subject: 'Control', A: Math.min(Math.max(((video.ballTouches || 20) - 20) / (100 - 20) * 100, 0), 100) },
     { subject: 'Attacking', A: Math.min((video.shots || 0) / 6 * 100, 100) },
     { subject: 'Vision', A: Math.min((video.keyPasses || 0) / 6 * 100, 100) },
@@ -111,10 +111,10 @@ export default function ProAnalysis() {
               </div>
               <div className="glass-panel rounded-3xl p-8 border border-red-500/20 bg-red-500/5">
                 <h3 className="text-xl font-display font-bold text-red-400 mb-4 flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5" /> Development Areas
+                  <AlertTriangle className="w-5 h-5" /> Areas for Improvement
                 </h3>
                 <div className="text-white/80 leading-relaxed whitespace-pre-wrap">
-                  {video.weaknesses || "Analyzing weaknesses..."}
+                  {video.weaknesses || "Analyzing improvement areas..."}
                 </div>
               </div>
             </div>

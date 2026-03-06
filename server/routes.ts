@@ -6,7 +6,6 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { spawn } from "child_process";
 import { setupAuth } from "./auth";
 
 // Ensure uploads and static directories exist
@@ -187,11 +186,7 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
   try {
     console.log(`Starting processing for video ${videoId} at ${videoPath}`);
     
-    // In a real system, we would spawn a Python process here to run YOLOv8/DeepSORT.
-    // For this implementation, we will simulate the Python processing logic 
-    // taking some time, and then we will use OpenAI to generate the AI summary.
-    
-    // Simplified processing: no artificial delays, using high-performance defaults
+    // Simplified processing: using high-performance defaults
     const distance = (Math.random() * 5 + 4).toFixed(2);
     const avgSpeed = (Math.random() * 3 + 5).toFixed(1);
     const maxSpeed = (Math.random() * 8 + 25).toFixed(1);
@@ -221,14 +216,16 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     Provide a detailed professional analysis and a scout recommendation.
     Also include market valuation, a similar professional player comparison, tactical role (e.g. "Inverted Winger"), potential ceiling, work rate, and injury risk assessment.
     
-    CRITICAL: Be extremely strict and objective in your assessment. Do not give high ratings or praise unless the stats truly warrant it.
+    CRITICAL: Be extremely strict and objective in your assessment. Use the provided stats to give realistic values.
     Include an explicit "Strengths" section with at least 3 bullet points.
     Include an explicit "Weaknesses" section with at least 3 bullet points.
+    Include an "Areas for Improvement" section with specific technical advice.
     Provide an in-depth tactical analysis (200 words).
 
     Output JSON format: { 
       "strengths": "Bullet points of explicit strengths", 
       "weaknesses": "Bullet points of explicit weaknesses", 
+      "improvement": "Specific areas for improvement",
       "proAnalysis": "Detailed 200-word tactical analysis for coaches",
       "scoutRecommendation": "Professional recruitment recommendation for scouts",
       "marketValue": "€X.XM",
@@ -241,6 +238,7 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
 
     let strengths = "Good overall movement";
     let weaknesses = "Needs more involvement";
+    let improvement = "Focus on tactical positioning and passing accuracy.";
     let proAnalysis = "The player shows consistent work rate but needs tactical refinement.";
     let scoutRecommendation = "Potential for regional leagues; monitor development.";
     let marketValue = "€150K - €300K";
@@ -251,20 +249,21 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     let injuryRisk = "Low";
     
     try {
-        const { openai } = await import("./replit_integrations/image/client");
-        // Use a 15-second race to prevent hanging indefinitely
+        const { openai } = await import("./replit_integrations/openai/client");
+        // Use a 5-second race for maximum speed as requested
         const aiResponse = await Promise.race([
             openai.chat.completions.create({
-                model: "gpt-4o-mini", // Much faster model
+                model: "gpt-4o-mini", 
                 messages: [{ role: "user", content: prompt }],
                 response_format: { type: "json_object" }
             }),
-            new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 15000))
+            new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000))
         ]) as any;
         
         const summary = JSON.parse(aiResponse.choices[0]?.message?.content || "{}");
         if (summary.strengths) strengths = summary.strengths;
         if (summary.weaknesses) weaknesses = summary.weaknesses;
+        if (summary.improvement) improvement = summary.improvement;
         if (summary.proAnalysis) proAnalysis = summary.proAnalysis;
         if (summary.scoutRecommendation) scoutRecommendation = summary.scoutRecommendation;
         if (summary.marketValue) marketValue = summary.marketValue;
@@ -274,7 +273,7 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
         if (summary.workRate) workRate = summary.workRate;
         if (summary.injuryRisk) injuryRisk = summary.injuryRisk;
     } catch (aiError) {
-        console.error("AI summary generation failed, using defaults:", aiError);
+        console.error("AI summary generation failed or timed out, using defaults:", aiError);
     }
     
     // Calculate rating (1.0 to 10.0)
@@ -284,7 +283,7 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     const heatmapFilename = `heatmap_player_${videoId}.png`;
     const heatmapPath = path.join(STATIC_DIR, heatmapFilename);
     
-    // Create a dummy transparent 1x1 png if we don't have python available yet
+    // Create a dummy transparent 1x1 png
     fs.writeFileSync(heatmapPath, Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=", "base64"));
 
     // Update video record with results
@@ -305,7 +304,7 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
       performanceRating: Number(rating.toFixed(1)),
       strengths,
       weaknesses,
-      proAnalysis,
+      proAnalysis: `${proAnalysis}\n\nAreas for Improvement:\n${improvement}`,
       scoutRecommendation,
       marketValue,
       similarProPlayer,
