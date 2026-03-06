@@ -13,6 +13,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { TopNav } from "@/components/layout/TopNav";
 import { User, Mail, Globe, Phone, MessageSquare, Shield, Target, MapPin, Video, Search, Camera, Loader2 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { motion } from "framer-motion";
 import { useParams } from "wouter";
 
@@ -50,6 +51,8 @@ export default function Profile() {
       matchVideosCount: displayUser?.matchVideosCount || "",
       videoLink: displayUser?.videoLink || "",
       howFoundUs: displayUser?.howFoundUs || "",
+      bio: displayUser?.bio || "",
+      profilePicture: displayUser?.profilePicture || "",
     },
   });
 
@@ -292,6 +295,30 @@ export default function Profile() {
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                           <Input {...field} readOnly={isOtherUser} placeholder="e.g. Instagram, friend, Google" className="pl-10 bg-white/5 border-white/10" />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name="bio" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bio</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <MessageSquare className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                          <Textarea {...field} readOnly={isOtherUser} placeholder="Tell us about your football journey..." className="pl-10 bg-white/5 border-white/10 min-h-[100px]" />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name="profilePicture" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Profile Picture URL</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Camera className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <Input {...field} readOnly={isOtherUser} placeholder="Paste an image URL" className="pl-10 bg-white/5 border-white/10" />
                         </div>
                       </FormControl>
                       <FormMessage />

@@ -103,6 +103,8 @@ export const users = pgTable("users", {
   videoLink: text("video_link"),
   howFoundUs: text("how_found_us"),
   playerPhoto: text("player_photo"),
+  bio: text("bio"),
+  profilePicture: text("profile_picture"),
   lastSeen: timestamp("last_seen").defaultNow().notNull(),
 });
 

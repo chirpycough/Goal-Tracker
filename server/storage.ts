@@ -157,7 +157,7 @@ export class DatabaseStorage implements IStorage {
       })
       .from(posts)
       .innerJoin(users, eq(posts.userId, users.id))
-      .orderBy(desc(posts.createdAt));
+      .orderBy(desc(posts.id)); // Use ID for stable descending order
     
     return results.map(r => ({ ...r.post, user: r.user }));
   }

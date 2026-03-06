@@ -125,7 +125,12 @@ export async function registerRoutes(
         content: content || "",
         imageUrl: imageUrl,
       });
-      res.status(201).json(post);
+
+      // Fetch the post with user info to return to the frontend
+      const posts = await storage.getPosts();
+      const newPost = posts.find(p => p.id === post.id);
+
+      res.status(201).json(newPost || post);
     } catch (error) {
       console.error("Error creating post:", error);
       res.status(500).json({ message: "Failed to create post" });

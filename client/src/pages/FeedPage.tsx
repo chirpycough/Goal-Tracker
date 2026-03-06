@@ -126,6 +126,7 @@ export default function FeedPage() {
               >
                 <div className="flex gap-4">
                   <Avatar className="w-10 h-10 ring-2 ring-primary/20">
+                    <AvatarImage src={user?.profilePicture || user?.playerPhoto || undefined} />
                     <AvatarFallback className="bg-primary/10 text-primary">
                       {user?.username?.[0]?.toUpperCase()}
                     </AvatarFallback>
@@ -223,7 +224,7 @@ export default function FeedPage() {
                     <Card className="bg-white/5 border-white/10 hover:border-primary/30 transition-all duration-300 group shadow-lg">
                       <CardHeader className="flex flex-row items-start gap-4 py-4 px-6">
                         <Avatar className="ring-2 ring-transparent group-hover:ring-primary/20 transition-all">
-                          <AvatarImage src={post.user.playerPhoto || undefined} />
+                          <AvatarImage src={post.user.profilePicture || post.user.playerPhoto || undefined} />
                           <AvatarFallback className="bg-primary/5 text-primary">
                             {post.user.username[0].toUpperCase()}
                           </AvatarFallback>
