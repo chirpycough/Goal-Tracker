@@ -117,6 +117,14 @@ export const messages = pgTable("messages", {
   isRead: boolean("is_read").default(false).notNull(),
 });
 
-export const insertMessageSchema = createInsertSchema(messages).omit({ id: true, createdAt: true });
-export type Message = typeof messages.$inferSelect;
-export type InsertMessage = z.infer<typeof insertMessageSchema>;
+export const posts = pgTable("posts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  content: text("content").notNull(),
+  imageUrl: text("image_url"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertPostSchema = createInsertSchema(posts).omit({ id: true, createdAt: true });
+export type Post = typeof posts.$inferSelect;
+export type InsertPost = z.infer<typeof insertPostSchema>;

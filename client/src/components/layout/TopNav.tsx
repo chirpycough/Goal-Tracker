@@ -65,6 +65,12 @@ export function TopNav() {
             >
               Dashboard
             </Link>
+            <Link 
+              href="/feed" 
+              className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
+            >
+              Feed
+            </Link>
             <div className="h-8 w-px bg-white/10" />
             {user && (
               <div className="flex items-center gap-2">

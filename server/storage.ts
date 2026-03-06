@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { videos, users, messages, type InsertVideo, type UpdateVideoRequest, type VideoResponse, type User, type InsertUser, type Message, type InsertMessage } from "@shared/schema";
+import { videos, users, messages, posts, type InsertVideo, type UpdateVideoRequest, type VideoResponse, type User, type InsertUser, type Message, type InsertMessage, type Post, type InsertPost } from "@shared/schema";
 import { eq, desc, and, or, asc } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
@@ -16,7 +16,7 @@ export interface IStorage {
   // Auth methods
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
-  getUsers(): Promise<User[]>;
+  getUsers(currentUserId?: number): Promise<(User & { unreadCount?: number })[]>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, updates: Partial<InsertUser>): Promise<User>;
   updateLastSeen(id: number): Promise<void>;
@@ -24,6 +24,10 @@ export interface IStorage {
   // Message methods
   getMessages(userId1: number, userId2: number): Promise<Message[]>;
   createMessage(message: InsertMessage): Promise<Message>;
+
+  // Post methods
+  getPosts(): Promise<(Post & { user: User })[]>;
+  createPost(post: InsertPost): Promise<Post>;
   sessionStore: session.Store;
 }
 
@@ -143,6 +147,24 @@ export class DatabaseStorage implements IStorage {
   async createMessage(message: InsertMessage): Promise<Message> {
     const [newMessage] = await db.insert(messages).values(message).returning();
     return newMessage;
+  }
+
+  async getPosts(): Promise<(Post & { user: User })[]> {
+    const results = await db
+      .select({
+        post: posts,
+        user: users,
+      })
+      .from(posts)
+      .innerJoin(users, eq(posts.userId, users.id))
+      .orderBy(desc(posts.createdAt));
+    
+    return results.map(r => ({ ...r.post, user: r.user }));
+  }
+
+  async createPost(post: InsertPost): Promise<Post> {
+    const [newPost] = await db.insert(posts).values(post).returning();
+    return newPost;
   }
 }
 

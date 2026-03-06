@@ -13,11 +13,13 @@ import ProAnalysis from "@/pages/ProAnalysis";
 import AuthPage from "@/pages/AuthPage";
 import Profile from "@/pages/Profile";
 import ChatPage from "@/pages/ChatPage";
+import FeedPage from "@/pages/FeedPage";
 
 function Router() {
   return (
     <Switch>
       <ProtectedRoute path="/" component={Dashboard} />
+      <ProtectedRoute path="/feed" component={FeedPage} />
       <ProtectedRoute path="/analysis/:id" component={Analysis} />
       <ProtectedRoute path="/pro-analysis/:id" component={ProAnalysis} />
       <ProtectedRoute path="/profile" component={Profile} />

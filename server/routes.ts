@@ -97,6 +97,28 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/posts", requireAuth, async (req, res) => {
+    try {
+      const posts = await storage.getPosts();
+      res.json(posts);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch posts" });
+    }
+  });
+
+  app.post("/api/posts", requireAuth, async (req, res) => {
+    try {
+      const post = await storage.createPost({
+        userId: req.user!.id,
+        content: req.body.content,
+        imageUrl: req.body.imageUrl,
+      });
+      res.status(201).json(post);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to create post" });
+    }
+  });
+
   // --- API Routes ---
 
   app.get(api.videos.list.path, requireAuth, async (req, res) => {
