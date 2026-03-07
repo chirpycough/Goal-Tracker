@@ -110,29 +110,27 @@ export default function Analysis() {
               </div>
 
               <div className="glass-panel rounded-3xl p-6 border border-white/5 flex flex-col">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 mb-4">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-primary" />
-                    <h3 className="text-xl font-display font-bold text-white">Player Profile</h3>
+                <div className="flex items-center gap-3 mb-6">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                  <h3 className="text-xl font-display font-bold text-white">Player Profile</h3>
+                </div>
+                <div className="flex flex-col gap-4 mb-6 text-xs">
+                  <div className="flex items-center gap-3">
+                    <span className="text-muted-foreground uppercase tracking-widest font-bold flex-shrink-0">Player:</span>
+                    <span className="text-white font-medium truncate max-w-[180px]">{video.originalName.split('.')[0]}</span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground uppercase tracking-wider text-[10px] font-bold">Player:</span>
-                      <span className="text-white font-medium">{video.originalName.split('.')[0]}</span>
+                  {video.playerAge && (
+                    <div className="flex items-center gap-3">
+                      <span className="text-muted-foreground uppercase tracking-widest font-bold flex-shrink-0">Age:</span>
+                      <span className="text-white font-medium">{video.playerAge}</span>
                     </div>
-                    {video.playerAge && (
-                      <div className="flex items-center gap-2 border-l border-white/10 pl-6">
-                        <span className="text-muted-foreground uppercase tracking-wider text-[10px] font-bold">Age:</span>
-                        <span className="text-white font-medium">{video.playerAge}</span>
-                      </div>
-                    )}
-                    {video.tacticalRole && (
-                      <div className="flex items-center gap-2 border-l border-white/10 pl-6">
-                        <span className="text-muted-foreground uppercase tracking-wider text-[10px] font-bold">Role:</span>
-                        <span className="text-white font-medium">{video.tacticalRole}</span>
-                      </div>
-                    )}
-                  </div>
+                  )}
+                  {video.tacticalRole && (
+                    <div className="flex items-center gap-3">
+                      <span className="text-muted-foreground uppercase tracking-widest font-bold flex-shrink-0">Role:</span>
+                      <span className="text-white font-medium truncate max-w-[180px]">{video.tacticalRole}</span>
+                    </div>
+                  )}
                 </div>
                 <div className="flex-1 min-h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
