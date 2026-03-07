@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useForm } from "react-hook-form";
+import { useLocation, useParams } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertUserSchema, InsertUser, User as SelectUser } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,11 +16,11 @@ import { TopNav } from "@/components/layout/TopNav";
 import { User, Mail, Globe, Phone, MessageSquare, Shield, Target, MapPin, Video, Search, Camera, Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { motion } from "framer-motion";
-import { useParams } from "wouter";
 
 export default function Profile() {
   const { user: currentUser } = useAuth();
   const { id } = useParams();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
 
   const isOtherUser = id && id !== currentUser?.id?.toString();
@@ -37,7 +38,7 @@ export default function Profile() {
 
   const form = useForm<InsertUser>({
     resolver: zodResolver(insertUserSchema),
-    values: {
+    defaultValues: {
       username: displayUser?.username || "",
       password: "", 
       fullName: displayUser?.fullName || "",
@@ -56,6 +57,28 @@ export default function Profile() {
     },
   });
 
+  React.useEffect(() => {
+    if (displayUser) {
+      form.reset({
+        username: displayUser.username || "",
+        password: "",
+        fullName: displayUser.fullName || "",
+        email: displayUser.email || "",
+        country: displayUser.country || "",
+        contactNumber: displayUser.contactNumber || "",
+        whatsAppNumber: displayUser.whatsAppNumber || "",
+        currentClub: displayUser.currentClub || "",
+        playerPosition: displayUser.playerPosition || "",
+        state: displayUser.state || "",
+        matchVideosCount: displayUser.matchVideosCount || "",
+        videoLink: displayUser.videoLink || "",
+        howFoundUs: displayUser.howFoundUs || "",
+        bio: displayUser.bio || "",
+        profilePicture: displayUser.profilePicture || "",
+      });
+    }
+  }, [displayUser, form]);
+
   const updateProfileMutation = useMutation({
     mutationFn: async (data: Partial<InsertUser>) => {
       const res = await apiRequest("PATCH", "/api/user", data);
@@ -64,6 +87,7 @@ export default function Profile() {
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(["/api/user"], updatedUser);
       toast({ title: "Profile updated successfully" });
+      setLocation("/");
     },
     onError: (error: Error) => {
       toast({ title: "Update failed", description: error.message, variant: "destructive" });

@@ -45,11 +45,19 @@ export default function AuthPage() {
   }
 
   const onLogin = (data: InsertUser) => {
-    loginMutation.mutate(data);
+    loginMutation.mutate(data, {
+      onSuccess: () => {
+        setLocation("/");
+      }
+    });
   };
 
   const onRegister = (data: InsertUser) => {
-    registerMutation.mutate(data);
+    registerMutation.mutate(data, {
+      onSuccess: () => {
+        setLocation("/");
+      }
+    });
   };
 
   return (

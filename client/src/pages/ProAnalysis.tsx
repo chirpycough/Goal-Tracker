@@ -321,6 +321,7 @@ export default function ProAnalysis() {
               </div>
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-8 border-t border-white/5">
                 <section className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
@@ -356,6 +357,7 @@ export default function ProAnalysis() {
                     </ul>
                   </div>
                 </section>
+            </div>
 
             {/* Potential & Market Outlook */}
             <section className="bg-white/5 p-12 rounded-[3rem] border border-white/10 relative overflow-hidden group">
@@ -396,7 +398,7 @@ export default function ProAnalysis() {
               <span>© 2026 PitchVision Analytics Global</span>
             </div>
           </div>
-        ) : null}
+        )}
       </main>
     </div>
   );
