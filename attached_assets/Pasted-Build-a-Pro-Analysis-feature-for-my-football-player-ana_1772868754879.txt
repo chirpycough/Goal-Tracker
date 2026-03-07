@@ -1,0 +1,103 @@
+Build a "Pro Analysis" feature for my football player analysis dashboard.
+
+When the user clicks the **"Pro Analysis" button**, the system should generate a **professional scouting report** for the selected player using the available player data and analysis metrics.
+
+The report must contain the following structured sections:
+
+1. Player Information
+
+* Player Name
+* Age
+* Position
+* Team
+* Match analyzed
+* Date of analysis
+
+2. Technical Ability (score 0–10)
+   Include analysis of:
+
+* First touch
+* Passing accuracy
+* Dribbling ability
+* Ball control under pressure
+* Shooting / finishing
+
+Generate a short professional paragraph summarizing the player's technical level.
+
+3. Tactical Intelligence (score 0–10)
+   Analyze:
+
+* Positioning
+* Decision making
+* Off-ball movement
+* Game awareness
+
+Generate a paragraph explaining the player's tactical understanding.
+
+4. Physical Attributes (score 0–10)
+   Evaluate:
+
+* Speed and acceleration
+* Strength
+* Endurance
+* Agility
+
+Generate a short paragraph about the player's physical performance.
+
+5. Mentality & Personality (score 0–10)
+   Analyze:
+
+* Work rate
+* Confidence
+* Discipline
+* Leadership
+* Composure under pressure
+
+Generate a professional scouting summary of the player’s mentality.
+
+6. Match Impact
+   Provide measurable performance metrics such as:
+
+* Goals
+* Assists
+* Key passes
+* Tackles
+* Interceptions
+* Duels won
+
+Generate a paragraph describing the player's influence on the match.
+
+7. Strengths
+   Generate a bullet list of the player's strongest attributes.
+
+8. Areas for Improvement
+   Generate a bullet list of weaknesses or development areas.
+
+9. Overall Rating
+   Calculate an overall score based on the categories above.
+
+10. Development Potential
+    Provide a short paragraph predicting the player’s development potential.
+
+After generating the full analysis report:
+
+Add a **"Download PDF Report" button** that generates a professional PDF document of the full scouting report.
+
+The PDF should include:
+
+* Player name and report title
+* All analysis sections
+* Scores
+* Strengths and weaknesses
+* Overall rating
+* Date of report
+
+Use a professional layout similar to a **football scouting report used by professional clubs**.
+
+Tech requirements:
+
+* Use JavaScript for the front-end logic
+* Use a library like **jsPDF or html2pdf** to generate the PDF
+* The PDF must download automatically when the user clicks "Download PDF Report"
+
+The feature must work smoothly inside the existing dashboard UI.
