@@ -43,6 +43,9 @@ export const videos = pgTable("videos", {
   injuryRisk: text("injury_risk"), // 'Low', 'Moderate', 'High'
   
   heatmapImageUrl: text("heatmap_image_url"),
+  playerAge: text("player_age"),
+  currentClub: text("current_club_name"),
+  matchAnalyzed: text("match_analyzed"),
   
   // Stored JSON data for raw coordinates if needed
   trajectoryData: jsonb("trajectory_data"),
