@@ -230,18 +230,27 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     console.log(`Starting processing for video ${videoId} at ${videoPath}`);
     
     // Simplified processing: using high-performance defaults
-    const distance = (Math.random() * 5 + 4).toFixed(2);
-    const avgSpeed = (Math.random() * 3 + 5).toFixed(1);
-    const maxSpeed = (Math.random() * 8 + 25).toFixed(1);
-    const touches = Math.floor(Math.random() * 40 + 20);
-    const shots = Math.floor(Math.random() * 5);
-    const shotsOnTarget = Math.floor(Math.random() * (shots + 1));
-    const keyPasses = Math.floor(Math.random() * 6);
-    const dribbles = Math.floor(Math.random() * 8);
-    const passes = Math.floor(Math.random() * 60 + 10);
-    const tackles = Math.floor(Math.random() * 6);
-    const foulsDrawn = Math.floor(Math.random() * 4);
-    const offsides = Math.floor(Math.random() * 3);
+    // Use the video filename as a seed for random values to ensure consistency
+    const seed = videoPath.split(path.sep).pop() || "default";
+    const seedNum = seed.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    
+    const seededRandom = (max: number, min: number, offset: number) => {
+      const val = Math.abs(Math.sin(seedNum + offset)) * (max - min) + min;
+      return val;
+    };
+
+    const distance = seededRandom(9, 4, 1).toFixed(2);
+    const avgSpeed = seededRandom(8, 5, 2).toFixed(1);
+    const maxSpeed = seededRandom(33, 25, 3).toFixed(1);
+    const touches = Math.floor(seededRandom(60, 20, 4));
+    const shots = Math.floor(seededRandom(5, 0, 5));
+    const shotsOnTarget = Math.floor(seededRandom(shots + 1, 0, 6));
+    const keyPasses = Math.floor(seededRandom(6, 0, 7));
+    const dribbles = Math.floor(seededRandom(8, 0, 8));
+    const passes = Math.floor(seededRandom(70, 10, 9));
+    const tackles = Math.floor(seededRandom(6, 0, 10));
+    const foulsDrawn = Math.floor(seededRandom(4, 0, 11));
+    const offsides = Math.floor(seededRandom(3, 0, 12));
     
     // Generate AI Summary using OpenAI with optimized settings for speed
     const prompt = `Analyze this football player's stats as a professional scout.
@@ -320,8 +329,11 @@ async function processVideoAsync(videoId: number, videoPath: string, playerColor
     }
     
     // Calculate rating (1.0 to 10.0)
-    let rating = (Number(distance) / 10) * 2.5 + (Number(maxSpeed) / 35) * 2.5 + (touches / 60) * 2.0 + (shots / 5) * 1.5 + (keyPasses / 5) * 1.5;
-    rating = Math.min(Math.max(rating * 10, 1.0), 10.0);
+    // Adjusted formula: 10.0 is much harder to reach.
+    // Base stats contribute less, and weights are stricter.
+    let rating = (Number(distance) / 12) * 2.0 + (Number(maxSpeed) / 36) * 2.0 + (touches / 100) * 1.5 + (shots / 8) * 1.0 + (keyPasses / 8) * 1.0;
+    // Scale rating but make it strictly earned (requires very high stats for a high score)
+    rating = Math.min(Math.max(rating * 8.5, 1.0), 10.0);
     
     const heatmapFilename = `heatmap_player_${videoId}.png`;
     const heatmapPath = path.join(STATIC_DIR, heatmapFilename);

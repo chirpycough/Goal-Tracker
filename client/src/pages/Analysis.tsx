@@ -110,9 +110,29 @@ export default function Analysis() {
               </div>
 
               <div className="glass-panel rounded-3xl p-6 border border-white/5 flex flex-col">
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-5 h-5 text-primary" />
-                  <h3 className="text-xl font-display font-bold text-white">Player Profile</h3>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 mb-4">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-primary" />
+                    <h3 className="text-xl font-display font-bold text-white">Player Profile</h3>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground uppercase tracking-wider text-[10px] font-bold">Player:</span>
+                      <span className="text-white font-medium">{video.originalName.split('.')[0]}</span>
+                    </div>
+                    {video.playerAge && (
+                      <div className="flex items-center gap-2 border-l border-white/10 pl-6">
+                        <span className="text-muted-foreground uppercase tracking-wider text-[10px] font-bold">Age:</span>
+                        <span className="text-white font-medium">{video.playerAge}</span>
+                      </div>
+                    )}
+                    {video.tacticalRole && (
+                      <div className="flex items-center gap-2 border-l border-white/10 pl-6">
+                        <span className="text-muted-foreground uppercase tracking-wider text-[10px] font-bold">Role:</span>
+                        <span className="text-white font-medium">{video.tacticalRole}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="flex-1 min-h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
