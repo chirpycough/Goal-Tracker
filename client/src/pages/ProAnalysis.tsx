@@ -154,30 +154,30 @@ export default function ProAnalysis() {
                   <div className="h-1.5 w-24 bg-primary rounded-full" />
                 </div>
                 
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-12">
-                  <div className="space-y-1">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-8">
+                  <div className="space-y-1.5">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Player Name</p>
-                    <p className="text-xl font-display font-bold text-white">{playerInfo.name}</p>
+                    <p className="text-sm font-bold text-white truncate max-w-[150px]">{playerInfo.name}</p>
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-1.5">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Age</p>
-                    <p className="text-xl font-display font-bold text-white">{playerInfo.age}</p>
+                    <p className="text-sm font-bold text-white">{playerInfo.age}</p>
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-1.5">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Position</p>
-                    <p className="text-xl font-display font-bold text-white">{playerInfo.position}</p>
+                    <p className="text-sm font-bold text-white truncate max-w-[150px]">{playerInfo.position}</p>
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-1.5">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Current Team</p>
-                    <p className="text-xl font-display font-bold text-white">{playerInfo.team}</p>
+                    <p className="text-sm font-bold text-white truncate max-w-[150px]">{playerInfo.team}</p>
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-1.5">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Match Analyzed</p>
-                    <p className="text-xl font-display font-bold text-white">{playerInfo.match}</p>
+                    <p className="text-sm font-bold text-white truncate max-w-[150px]">{playerInfo.match}</p>
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-1.5">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Analysis Date</p>
-                    <p className="text-xl font-display font-bold text-white">{playerInfo.date}</p>
+                    <p className="text-sm font-bold text-white">{playerInfo.date}</p>
                   </div>
                 </div>
               </div>
