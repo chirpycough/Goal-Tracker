@@ -148,7 +148,7 @@ export default function ProAnalysis() {
                   Elite Scouting Profile
                 </div>
                 <div>
-                  <h2 className="text-6xl font-display font-black text-white tracking-tighter leading-tight mb-2">
+                  <h2 className="text-6xl font-display font-black text-white tracking-tighter leading-tight mb-2 truncate max-w-[400px]">
                     {playerInfo.name}
                   </h2>
                   <div className="h-1.5 w-24 bg-primary rounded-full" />
