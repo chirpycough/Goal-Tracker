@@ -232,6 +232,21 @@ export default function ProAnalysis() {
                     <div className="text-3xl font-display font-black text-primary">{s.score}<span className="text-xs text-primary/30">/10</span></div>
                   </div>
                 ))}
+                <div className="bg-white/5 p-6 rounded-3xl border border-white/10 grid grid-cols-2 gap-4 hover:bg-white/10 transition-all duration-300">
+                  {[
+                    { label: 'Stamina', val: getMetricPercent('Stamina') },
+                    { label: 'Control', val: getMetricPercent('Control') },
+                    { label: 'Attacking', val: getMetricPercent('Attacking') },
+                    { label: 'Vision', val: getMetricPercent('Vision') },
+                    { label: 'Defending', val: getMetricPercent('Defending') },
+                    { label: 'Speed', val: getMetricPercent('Speed') },
+                  ].map((m) => (
+                    <div key={m.label} className="space-y-1">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">{m.label}</p>
+                      <p className="text-xl font-display font-black text-primary">{m.val}%</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -368,13 +383,19 @@ export default function ProAnalysis() {
                 <Star className="w-4 h-4 fill-current" /> Future Projection
               </h3>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 relative z-10">
-                <div className="lg:col-span-2 space-y-4">
-                  <p className="text-2xl font-display font-black text-white leading-tight">
-                    Estimated Ceiling: <span className="text-primary italic">{video.potentialCeiling || "UEFA Champions League Standard"}</span>
-                  </p>
-                  <p className="text-white/60 leading-relaxed font-medium">
-                    The player demonstrates a development curve consistent with elite European academy graduates. Current physical metrics combined with technical versatility suggest a high floor for professional integration. Projected to reach peak performance within 2-3 seasons of professional development.
-                  </p>
+                <div className="lg:col-span-2 space-y-6">
+                  <div className="space-y-4">
+                    <p className="text-2xl font-display font-black text-white leading-tight">
+                      Player Level: <span className="text-primary italic">{video.potentialCeiling || "UEFA Champions League Standard"}</span>
+                    </p>
+                    <p className="text-white/60 leading-relaxed font-medium">
+                      The player demonstrates a development curve consistent with elite European academy graduates. Current physical metrics combined with technical versatility suggest a high floor for professional integration. Projected to reach peak performance within 2-3 seasons of professional development.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-bold uppercase tracking-widest text-white/60">Market Valuation</p>
+                    <p className="text-3xl font-display font-black text-primary">{video.marketValue || "€500K - €750K"}</p>
+                  </div>
                 </div>
                   <div className="bg-black/40 backdrop-blur-xl p-8 rounded-[2rem] border border-white/5 flex flex-col justify-center text-center">
                      <p className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">Overall Rating</p>
