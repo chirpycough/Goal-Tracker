@@ -11,6 +11,7 @@ import Dashboard from "@/pages/Dashboard";
 import Analysis from "@/pages/Analysis";
 import ProAnalysis from "@/pages/ProAnalysis";
 import AuthPage from "@/pages/AuthPage";
+import Registration from "@/pages/Registration";
 import Profile from "@/pages/Profile";
 import ChatPage from "@/pages/ChatPage";
 import FeedPage from "@/pages/FeedPage";
@@ -26,6 +27,7 @@ function Router() {
       <ProtectedRoute path="/profile/:id" component={Profile} />
       <ProtectedRoute path="/chat/:id" component={ChatPage} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/register" component={Registration} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>

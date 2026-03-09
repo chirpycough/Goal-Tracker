@@ -33,8 +33,6 @@ export const api = {
         404: errorSchemas.notFound,
       },
     },
-    // Upload uses multipart/form-data, so we don't strictly type the body here
-    // but the response is typed.
     upload: {
       method: 'POST' as const,
       path: '/api/videos' as const,
@@ -52,6 +50,10 @@ export const api = {
         404: errorSchemas.notFound,
       },
     },
+  },
+  register: {
+    method: 'POST' as const,
+    path: '/api/register' as const,
   },
 };
 

@@ -108,12 +108,74 @@ export const users = pgTable("users", {
   playerPhoto: text("player_photo"),
   bio: text("bio"),
   profilePicture: text("profile_picture"),
+  userType: text("user_type").default("player"), // 'player', 'coach', 'scout'
   lastSeen: timestamp("last_seen").defaultNow().notNull(),
+});
+
+// Player Profile
+export const playerProfiles = pgTable("player_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  dateOfBirth: text("date_of_birth"),
+  height: integer("height"),
+  weight: integer("weight"),
+  preferredFoot: text("preferred_foot"), // 'right', 'left', 'both'
+  previousClubs: text("previous_clubs"),
+  teamLevel: text("team_level"), // 'street', 'school', 'local_club', 'academy', 'semi_professional', 'professional', 'top_division'
+  yearsOfCompetitiveFootball: text("years_of_experience"),
+  goals: integer("goals"),
+  assists: integer("assists"),
+  matchesPlayed: integer("matches_played"),
+  lookingForClub: boolean("looking_for_club"),
+  willingToRelocate: boolean("willing_to_relocate"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Coach Profile
+export const coachProfiles = pgTable("coach_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  age: integer("age"),
+  coachingLicense: text("coaching_license"), // 'uefa_a', 'uefa_b', 'caf', 'fa', 'none'
+  yearsOfCoaching: integer("years_of_coaching"),
+  previousTeams: text("previous_teams"),
+  coachingLevel: text("coaching_level"), // 'youth', 'professional', 'goalkeeper'
+  trophiesWon: integer("trophies_won"),
+  promotions: integer("promotions"),
+  championships: integer("championships"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Scout Profile
+export const scoutProfiles = pgTable("scout_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  organization: text("organization"),
+  currentClubAgency: text("current_club_agency"),
+  yearsOfScouting: integer("years_of_scouting"),
+  scoutingRegions: text("scouting_regions"), // comma-separated
+  ageGroupsFocus: text("age_groups_focus"), // comma-separated
+  positionsFocus: text("positions_focus"), // comma-separated
+  authorityLevel: text("authority_level"), // 'independent', 'club_scout', 'agency_scout'
+  workEmail: text("work_email"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export type User = typeof users.$inferSelect;
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, lastSeen: true });
 export type InsertUser = z.infer<typeof insertUserSchema>;
+
+export type PlayerProfile = typeof playerProfiles.$inferSelect;
+export const insertPlayerProfileSchema = createInsertSchema(playerProfiles).omit({ id: true, createdAt: true });
+export type InsertPlayerProfile = z.infer<typeof insertPlayerProfileSchema>;
+
+export type CoachProfile = typeof coachProfiles.$inferSelect;
+export const insertCoachProfileSchema = createInsertSchema(coachProfiles).omit({ id: true, createdAt: true });
+export type InsertCoachProfile = z.infer<typeof insertCoachProfileSchema>;
+
+export type ScoutProfile = typeof scoutProfiles.$inferSelect;
+export const insertScoutProfileSchema = createInsertSchema(scoutProfiles).omit({ id: true, createdAt: true });
+export type InsertScoutProfile = z.infer<typeof insertScoutProfileSchema>;
 
 export const messages = pgTable("messages", {
   id: serial("id").primaryKey(),

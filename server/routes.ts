@@ -218,6 +218,28 @@ export async function registerRoutes(
     }
   });
 
+  // Registration endpoint
+  app.post("/api/register", async (req, res) => {
+    try {
+      const { userType, username, password, fullName, email, country, contactNumber, ...profileData } = req.body;
+      
+      const user = await storage.createUser({
+        username,
+        password,
+        fullName,
+        email,
+        country,
+        contactNumber,
+        userType: userType || "player",
+      });
+
+      res.status(201).json({ id: user.id, username: user.username });
+    } catch (error) {
+      console.error("Registration error:", error);
+      res.status(400).json({ message: "Registration failed" });
+    }
+  });
+
   // Seed initial data if DB is empty
   seedDatabase().catch(console.error);
 
