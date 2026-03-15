@@ -26,9 +26,8 @@ export function ProtectedRoute({
           return <Redirect to="/auth" />;
         }
 
-        const isProfileComplete = user.fullName && user.email && user.country && user.playerPosition;
-        if (!isProfileComplete && path !== "/profile") {
-          return <Redirect to="/profile" />;
+        if (!user.userType) {
+          return <Redirect to="/setup-profile" />;
         }
 
         return <Component />;

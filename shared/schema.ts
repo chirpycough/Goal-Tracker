@@ -108,7 +108,7 @@ export const users = pgTable("users", {
   playerPhoto: text("player_photo"),
   bio: text("bio"),
   profilePicture: text("profile_picture"),
-  userType: text("user_type").default("player"), // 'player', 'coach', 'scout'
+  userType: text("user_type"), // 'player', 'coach', 'scout' — null means profile setup not complete
   lastSeen: timestamp("last_seen").defaultNow().notNull(),
 });
 

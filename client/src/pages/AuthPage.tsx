@@ -55,7 +55,7 @@ export default function AuthPage() {
   const onRegister = (data: InsertUser) => {
     registerMutation.mutate(data, {
       onSuccess: () => {
-        setLocation("/");
+        setLocation("/setup-profile");
       }
     });
   };
