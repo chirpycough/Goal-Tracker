@@ -27,7 +27,10 @@ export interface IStorage {
 
   // Post methods
   getPosts(): Promise<(Post & { user: User })[]>;
+  getPost(id: number): Promise<Post | undefined>;
   createPost(post: InsertPost): Promise<Post>;
+  updatePost(id: number, content: string): Promise<Post | undefined>;
+  deletePost(id: number): Promise<void>;
   sessionStore: session.Store;
 }
 
@@ -157,7 +160,7 @@ export class DatabaseStorage implements IStorage {
       })
       .from(posts)
       .innerJoin(users, eq(posts.userId, users.id))
-      .orderBy(desc(posts.id)); // Use ID for stable descending order
+      .orderBy(desc(posts.id));
     
     return results.map(r => ({ ...r.post, user: r.user }));
   }
@@ -165,6 +168,23 @@ export class DatabaseStorage implements IStorage {
   async createPost(post: InsertPost): Promise<Post> {
     const [newPost] = await db.insert(posts).values(post).returning();
     return newPost;
+  }
+
+  async updatePost(id: number, content: string): Promise<Post | undefined> {
+    const [updated] = await db.update(posts)
+      .set({ content })
+      .where(eq(posts.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deletePost(id: number): Promise<void> {
+    await db.delete(posts).where(eq(posts.id, id));
+  }
+
+  async getPost(id: number): Promise<Post | undefined> {
+    const [post] = await db.select().from(posts).where(eq(posts.id, id));
+    return post;
   }
 }
 

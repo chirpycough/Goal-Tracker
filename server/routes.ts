@@ -137,6 +137,37 @@ export async function registerRoutes(
     }
   });
 
+  app.patch("/api/posts/:id", requireAuth, async (req, res) => {
+    try {
+      const postId = Number(req.params.id);
+      const post = await storage.getPost(postId);
+      if (!post) return res.status(404).json({ message: "Post not found" });
+      if (post.userId !== req.user!.id) return res.status(403).json({ message: "Not your post" });
+      const updated = await storage.updatePost(postId, req.body.content || "");
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update post" });
+    }
+  });
+
+  app.delete("/api/posts/:id", requireAuth, async (req, res) => {
+    try {
+      const postId = Number(req.params.id);
+      const post = await storage.getPost(postId);
+      if (!post) return res.status(404).json({ message: "Post not found" });
+      if (post.userId !== req.user!.id) return res.status(403).json({ message: "Not your post" });
+      // Delete uploaded image file if it exists
+      if (post.imageUrl) {
+        const filePath = path.join(process.cwd(), post.imageUrl);
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      }
+      await storage.deletePost(postId);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete post" });
+    }
+  });
+
   // Serve uploads directory
   app.use("/uploads", express.static(UPLOADS_DIR));
 
