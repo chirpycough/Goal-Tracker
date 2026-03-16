@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
-import { Loader2, ArrowLeft, Target, Trophy, Search, ImageOff } from "lucide-react";
+import { Loader2, ArrowLeft, Target, Trophy, Search } from "lucide-react";
 import { Link } from "wouter";
 
 type PostWithUser = Post & { user: User };
@@ -152,24 +152,16 @@ export default function UserPostsPage() {
 }
 
 function PostImage({ src, hasText }: { src: string; hasText: boolean }) {
-  const [status, setStatus] = React.useState<"loading" | "ok" | "error">("loading");
-
+  const [failed, setFailed] = React.useState(false);
+  if (!src || failed) return null;
   return (
     <div className={hasText ? "border-t border-white/5" : ""}>
-      {status === "error" ? (
-        <div className="flex flex-col items-center justify-center gap-2 py-8 text-white/20 bg-white/3">
-          <ImageOff className="w-6 h-6" />
-          <span className="text-xs">Image unavailable</span>
-        </div>
-      ) : (
-        <img
-          src={src}
-          alt="Post image"
-          className={`w-full object-cover max-h-[400px] transition-opacity duration-300 ${status === "loading" ? "opacity-0" : "opacity-100"}`}
-          onLoad={() => setStatus("ok")}
-          onError={() => setStatus("error")}
-        />
-      )}
+      <img
+        src={src}
+        alt=""
+        className="w-full object-cover max-h-[400px]"
+        onError={() => setFailed(true)}
+      />
     </div>
   );
 }

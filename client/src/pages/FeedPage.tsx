@@ -14,27 +14,22 @@ import { formatDistanceToNow } from "date-fns";
 import { Link } from "wouter";
 import {
   Loader2, Image as ImageIcon, Send, X, Heart, MoreHorizontal,
-  Pencil, Trash2, Check, ImageOff
+  Pencil, Trash2, Check
 } from "lucide-react";
 
 type PostWithUser = Post & { user: User };
 
 function FeedPostImage({ src }: { src: string }) {
-  const [status, setStatus] = React.useState<"loading" | "ok" | "error">("loading");
+  const [failed, setFailed] = React.useState(false);
+  if (!src) return null;
   return (
     <div className="overflow-hidden border-t border-white/5">
-      {status === "error" ? (
-        <div className="flex flex-col items-center justify-center gap-2 py-6 text-white/20 bg-white/3">
-          <ImageOff className="w-5 h-5" />
-          <span className="text-xs">Image unavailable</span>
-        </div>
-      ) : (
+      {failed ? null : (
         <img
           src={src}
-          alt="Post image"
-          className={`w-full object-cover max-h-[260px] hover:opacity-95 transition-opacity cursor-pointer ${status === "loading" ? "opacity-0 h-0" : "opacity-100"}`}
-          onLoad={() => setStatus("ok")}
-          onError={() => setStatus("error")}
+          alt=""
+          className="w-full object-cover max-h-[260px] hover:opacity-95 transition-opacity cursor-pointer"
+          onError={() => setFailed(true)}
         />
       )}
     </div>
