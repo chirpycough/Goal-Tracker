@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
+import { Link } from "wouter";
 import {
   Loader2, Image as ImageIcon, Send, X, Heart, MoreHorizontal,
   Pencil, Trash2, Check
@@ -227,17 +228,21 @@ export default function FeedPage() {
                     <div className="bg-white/5 border border-white/10 hover:border-white/20 rounded-2xl overflow-hidden transition-colors">
                       {/* Post Header */}
                       <div className="flex items-start gap-3 px-4 pt-4 pb-3">
-                        <Avatar className="w-9 h-9 ring-1 ring-white/10 shrink-0">
-                          <AvatarImage src={post.user.profilePicture || undefined} />
-                          <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">
-                            {post.user.username[0].toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
+                        <Link href={`/profile/${post.user.id}`}>
+                          <Avatar className="w-9 h-9 ring-1 ring-white/10 hover:ring-primary/40 shrink-0 cursor-pointer transition-all">
+                            <AvatarImage src={post.user.profilePicture || undefined} />
+                            <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">
+                              {post.user.username[0].toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        </Link>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-semibold text-white text-sm">
-                              {post.user.fullName || post.user.username}
-                            </span>
+                            <Link href={`/profile/${post.user.id}`}>
+                              <span className="font-semibold text-white text-sm hover:text-primary transition-colors cursor-pointer">
+                                {post.user.fullName || post.user.username}
+                              </span>
+                            </Link>
                             {roleLabel && (
                               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/20">
                                 {roleLabel}

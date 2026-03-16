@@ -97,6 +97,15 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/users/:id/posts", requireAuth, async (req, res) => {
+    try {
+      const posts = await storage.getPostsByUser(Number(req.params.id));
+      res.json(posts);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch user posts" });
+    }
+  });
+
   app.get("/api/posts", requireAuth, async (req, res) => {
     try {
       const posts = await storage.getPosts();
