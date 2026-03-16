@@ -50,11 +50,10 @@ export default function FeedPage() {
   // ─── Create post ───
   const createMutation = useMutation({
     mutationFn: async () => {
-      const formData = new FormData();
-      formData.append("content", content.trim());
-      if (selectedImage) formData.append("image", selectedImage);
-      const res = await fetch("/api/posts", { method: "POST", body: formData, credentials: "include" });
-      if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || "Failed to post"); }
+      const res = await apiRequest("POST", "/api/posts", {
+        content: content.trim(),
+        imageUrl: previewUrl || null,
+      });
       return res.json();
     },
     onSuccess: (newPost) => {
@@ -332,8 +331,11 @@ export default function FeedPage() {
                         <div className="overflow-hidden border-t border-white/5">
                           <img
                             src={post.imageUrl}
-                            alt="Post"
+                            alt="Post image"
                             className="w-full object-cover max-h-[260px] hover:opacity-95 transition-opacity cursor-pointer"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).parentElement!.style.display = "none";
+                            }}
                           />
                         </div>
                       )}

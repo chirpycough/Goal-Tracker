@@ -106,27 +106,20 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/posts", requireAuth, upload.single("image"), async (req, res) => {
+  app.post("/api/posts", requireAuth, async (req, res) => {
     try {
-      const content = req.body.content;
-      const file = req.file;
+      const { content, imageUrl } = req.body;
 
-      if (!content?.trim() && !file) {
+      if (!content?.trim() && !imageUrl) {
         return res.status(400).json({ message: "Post must have content or an image" });
-      }
-
-      let imageUrl = null;
-      if (file) {
-        imageUrl = `/uploads/${file.filename}`;
       }
 
       const post = await storage.createPost({
         userId: req.user!.id,
         content: content || "",
-        imageUrl: imageUrl,
+        imageUrl: imageUrl || null,
       });
 
-      // Fetch the post with user info to return to the frontend
       const allPosts = await storage.getPosts();
       const newPost = allPosts.find(p => p.id === post.id);
 
@@ -156,11 +149,6 @@ export async function registerRoutes(
       const post = await storage.getPost(postId);
       if (!post) return res.status(404).json({ message: "Post not found" });
       if (post.userId !== req.user!.id) return res.status(403).json({ message: "Not your post" });
-      // Delete uploaded image file if it exists
-      if (post.imageUrl) {
-        const filePath = path.join(process.cwd(), post.imageUrl);
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      }
       await storage.deletePost(postId);
       res.status(204).send();
     } catch (error) {
