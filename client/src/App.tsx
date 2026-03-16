@@ -15,6 +15,7 @@ import SetupProfile from "@/pages/SetupProfile";
 import Profile from "@/pages/Profile";
 import ChatPage from "@/pages/ChatPage";
 import FeedPage from "@/pages/FeedPage";
+import UserPostsPage from "@/pages/UserPostsPage";
 
 function Router() {
   return (
@@ -24,6 +25,7 @@ function Router() {
       <ProtectedRoute path="/analysis/:id" component={Analysis} />
       <ProtectedRoute path="/pro-analysis/:id" component={ProAnalysis} />
       <ProtectedRoute path="/profile" component={Profile} />
+      <ProtectedRoute path="/profile/:id/posts" component={UserPostsPage} />
       <ProtectedRoute path="/profile/:id" component={Profile} />
       <ProtectedRoute path="/chat/:id" component={ChatPage} />
       <Route path="/auth" component={AuthPage} />

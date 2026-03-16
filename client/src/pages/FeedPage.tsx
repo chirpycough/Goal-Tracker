@@ -14,10 +14,32 @@ import { formatDistanceToNow } from "date-fns";
 import { Link } from "wouter";
 import {
   Loader2, Image as ImageIcon, Send, X, Heart, MoreHorizontal,
-  Pencil, Trash2, Check
+  Pencil, Trash2, Check, ImageOff
 } from "lucide-react";
 
 type PostWithUser = Post & { user: User };
+
+function FeedPostImage({ src }: { src: string }) {
+  const [status, setStatus] = React.useState<"loading" | "ok" | "error">("loading");
+  return (
+    <div className="overflow-hidden border-t border-white/5">
+      {status === "error" ? (
+        <div className="flex flex-col items-center justify-center gap-2 py-6 text-white/20 bg-white/3">
+          <ImageOff className="w-5 h-5" />
+          <span className="text-xs">Image unavailable</span>
+        </div>
+      ) : (
+        <img
+          src={src}
+          alt="Post image"
+          className={`w-full object-cover max-h-[260px] hover:opacity-95 transition-opacity cursor-pointer ${status === "loading" ? "opacity-0 h-0" : "opacity-100"}`}
+          onLoad={() => setStatus("ok")}
+          onError={() => setStatus("error")}
+        />
+      )}
+    </div>
+  );
+}
 
 export default function FeedPage() {
   const { user } = useAuth();
@@ -44,6 +66,7 @@ export default function FeedPage() {
   // ─── Fetch posts with polling for real-time updates ───
   const { data: posts, isLoading } = useQuery<PostWithUser[]>({
     queryKey: ["/api/posts"],
+    staleTime: 0,           // always treat as stale so fresh data loads after login
     refetchInterval: 10000, // refresh every 10s
     refetchIntervalInBackground: false,
   });
@@ -333,16 +356,7 @@ export default function FeedPage() {
 
                       {/* Post Image — compact */}
                       {post.imageUrl && !isEditing && (
-                        <div className="overflow-hidden border-t border-white/5">
-                          <img
-                            src={post.imageUrl}
-                            alt="Post image"
-                            className="w-full object-cover max-h-[260px] hover:opacity-95 transition-opacity cursor-pointer"
-                            onError={(e) => {
-                              (e.currentTarget as HTMLImageElement).parentElement!.style.display = "none";
-                            }}
-                          />
-                        </div>
+                        <FeedPostImage src={post.imageUrl} />
                       )}
 
                       {/* Delete confirmation */}

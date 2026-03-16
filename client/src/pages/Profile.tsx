@@ -11,9 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User as SelectUser, Post } from "@shared/schema";
-import { motion, AnimatePresence } from "framer-motion";
-import { formatDistanceToNow } from "date-fns";
+import { User as SelectUser } from "@shared/schema";
+import { motion } from "framer-motion";
+import { Link } from "wouter";
 import {
   User, Mail, Globe, Phone, MessageSquare, Camera, Loader2,
   Shield, Target, Trophy, Search, MapPin, CheckCircle2, FileText
@@ -49,13 +49,6 @@ export default function Profile() {
     queryKey: [`/api/users/${id}`],
     queryFn: async () => { const r = await apiRequest("GET", `/api/users/${id}`); return r.json(); },
     enabled: !!isOtherUser,
-  });
-
-  type PostWithUser = Post & { user: SelectUser };
-  const { data: userPosts, isLoading: isLoadingPosts } = useQuery<PostWithUser[]>({
-    queryKey: ["/api/users", id, "posts"],
-    queryFn: async () => { const r = await apiRequest("GET", `/api/users/${id}/posts`); return r.json(); },
-    enabled: !!isOtherUser && !!id,
   });
 
   const displayUser = isOtherUser ? otherUser : currentUser;
@@ -280,7 +273,7 @@ export default function Profile() {
                 </>
               )}
             </div>
-            <div>
+            <div className="flex-1 min-w-0">
               <h1 className="text-2xl font-display font-bold text-white">
                 {isOtherUser ? `${displayUser?.username}'s Profile` : "My Profile"}
               </h1>
@@ -291,8 +284,21 @@ export default function Profile() {
                 </span>
               )}
             </div>
-            {!isOtherUser && (
-              <div className="ml-auto text-xs text-muted-foreground flex items-center gap-1.5">
+            {isOtherUser ? (
+              <Link href={`/profile/${id}/posts`}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="ml-auto shrink-0 gap-2 border-primary/40 text-primary hover:bg-primary/10"
+                  data-testid="button-view-posts"
+                >
+                  <FileText className="w-4 h-4" />
+                  View Posts
+                </Button>
+              </Link>
+            ) : (
+              <div className="ml-auto text-xs text-muted-foreground flex items-center gap-1.5 shrink-0">
                 <Camera className="w-3.5 h-3.5" />
                 <span>Hover photo to change</span>
               </div>
@@ -534,65 +540,6 @@ export default function Profile() {
             )}
           </form>
 
-          {/* ─── User Posts Section (only when viewing another user) ─── */}
-          {isOtherUser && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="mt-10 space-y-5"
-            >
-              <div className="flex items-center gap-2 text-primary">
-                <FileText className="w-4 h-4" />
-                <h2 className="text-xs font-bold uppercase tracking-[0.15em]">Latest Posts</h2>
-              </div>
-
-              {isLoadingPosts ? (
-                <div className="flex justify-center py-10">
-                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                </div>
-              ) : !userPosts || userPosts.length === 0 ? (
-                <div className="text-center py-12 border border-dashed border-white/10 rounded-2xl">
-                  <div className="text-3xl mb-2">📭</div>
-                  <p className="text-sm text-white/40">No posts yet</p>
-                </div>
-              ) : (
-                <div className="space-y-4 pb-10">
-                  <AnimatePresence initial={false}>
-                    {userPosts.map((post) => (
-                      <motion.div
-                        key={post.id}
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden"
-                      >
-                        {post.content && (
-                          <div className="px-4 py-4">
-                            <p className="text-white/85 text-sm leading-relaxed whitespace-pre-wrap">{post.content}</p>
-                          </div>
-                        )}
-                        {post.imageUrl && (
-                          <div className="border-t border-white/5">
-                            <img
-                              src={post.imageUrl}
-                              alt="Post"
-                              className="w-full object-cover max-h-[240px]"
-                              onError={(e) => { (e.currentTarget as HTMLImageElement).parentElement!.style.display = "none"; }}
-                            />
-                          </div>
-                        )}
-                        <div className="px-4 py-2 border-t border-white/5">
-                          <span className="text-xs text-white/35">
-                            {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
-                          </span>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              )}
-            </motion.div>
-          )}
         </motion.div>
       </main>
     </div>
